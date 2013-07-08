@@ -21,7 +21,7 @@ class EtsyApi
 
 		if (!file_exists($methods_file))
 		{
-			exit("'{$methods}' not exists");
+			exit("Etsy methods file '{$methods}' not exists");
 		}
 		$this->methods = json_decode(file_get_contents($methods_file), true);
 		$this->client = $client;
