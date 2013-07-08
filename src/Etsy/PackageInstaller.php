@@ -13,7 +13,8 @@ class PackageInstaller
 
         $autoload_filepath = realpath($config->get('vendor-dir')) . '/autoload.php';
 
-        $destination_file  = dirname(realpath(__FILE__)) . '/../../scripts/autoload.php';
+        $destination_file = dirname(realpath(__FILE__)) . '/../../scripts/autoload.php';
+        $destination_file = '/Users/Ina/Documents/ProductGram/src/tmp/autoload.php';
 
         $contents = "<?php require_once('{$autoload_filepath}');";
 
