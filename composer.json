@@ -21,5 +21,10 @@
             "Etsy\\Mocks\\": "src/test/",
             "Etsy\\": "src/"
         }
-    }
+    },
+    "scripts": {
+        "post-package-install": [
+            "Etsy\\PackageInstaller::postPackageInstall"
+        ]
+    }    
 }
