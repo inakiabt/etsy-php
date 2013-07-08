@@ -1,16 +1,16 @@
-*Scripts
-`scripts/auth-setup.php` will generate an oauth config file required by the Etsy client to make requests
-	Example `scripts/auth-setup.php /path/to/my-oauth-config-destination.php /path/to/etsy-app-config.php`
-
-***etsy-app-config.php
-```php
-<?php
-return array(
-	'consumer_key' => 'asdfghjklqwertyuk',
-	'consumer_secret' => 'fghjk543hj3b'
-);
+# Scripts #
+`scripts/auth-setup.php` will generate an oauth config file required by the Etsy client to make requests.
+It will show an URL you must open, sign in on Etsy and allow the application.  Then copy paste the verification code on the terminal.
+(On Mac OSX, it will open your default browser automatically)
+Example 
 ```
-***Generated OAuth file
+export ETSY_CONSUMER_KEY=qwertyuiop123456dfghj
+export ETSY_CONSUMER_SECRET=qwertyuiop12
+
+php scripts/auth-setup.php /path/to/my-oauth-config-destination.php
+```
+
+## Generated OAuth file ##
 After all, it should looks like this:
 ```
 <?php

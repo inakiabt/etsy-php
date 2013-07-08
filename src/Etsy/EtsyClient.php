@@ -37,12 +37,7 @@ class EtsyClient
 	        $data = $this->oauth->fetch($this->base_url . $this->base_path . '/', $path, $params, $method);
 	        $response = $this->oauth->getLastResponse();
 	        
-	        if ($json === false)
-	        {
-	            return json_decode($response, true);
-	        }
-
-	        return $response;
+	        return json_decode($response, !$json);
 	    } catch (\OAuthException $e) {
 	        throw new EtsyRequestException($e, $this->oauth->getLastResponse(), $this->ouath->getLastResponseInfo());
 	    }
@@ -53,7 +48,7 @@ class EtsyClient
 	    try {
 			return $this->oauth->getRequestToken($this->base_url . "/oauth/request_token", $permissions);
 	    } catch (\OAuthException $e) {
-	        throw new EtsyRequestException($e, $this->oauth->getLastResponse(), $this->ouath->getLastResponseInfo());
+	        throw new EtsyRequestException($e, $this->oauth->getLastResponse(), $this->oauth->getLastResponseInfo());
 	    }
 
 	    return null;

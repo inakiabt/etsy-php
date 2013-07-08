@@ -1,25 +1,34 @@
 <?php
 
-$destination_file = $argv[1];
+$destination_file = @$argv[1];
 if (empty($destination_file))
 {
-    echo "Destination file is required: php auth-setup.php /path/to/my-etsy-auth-config.php";
+    error_log("Destination OAuth file is required: php auth-setup.php /path/to/my-etsy-oauth-config.php");
     exit(1);
 }
 
-require_once('../vendor/autoload.php');
+$consumer_key = getenv('ETSY_CONSUMER_KEY');
+$consumer_secret = getenv('ETSY_CONSUMER_SECRET');
+
+if (empty($consumer_key) || empty($consumer_secret))
+{
+    error_log("Env vars ETSY_CONSUMER_KEY and ETSY_CONSUMER_SECRET are required\n\nExample:\nexport ETSY_CONSUMER_KEY=qwertyuiop123456dfghj\nexport ETSY_CONSUMER_SECRET=qwertyuiop12");
+    exit(1);
+}
+
+require_once(dirname(realpath(__FILE__)) . '/../vendor/autoload.php');
 
 use Etsy\EtsyClient;
 use Etsy\OAuthHelper;
 
-$client = new EtsyClient('AAAAAAAAAAAAAAAAA', 'AAAAAAAAAAAAAAAAA');
+$client = new EtsyClient($consumer_key, $consumer_secret);
 $helper = new OAuthHelper($client);
 
 try {
     $url = $helper->requestPermissionUrl();
 
     /// read user input for verifier
-    print "please sign in to this url and paste the verifier below: $url \n";
+    print "Please sign in to this url and paste the verifier below: $url \n";
 
     // on Mac OSX
     exec("open '" . $url . "'");
@@ -31,7 +40,7 @@ try {
 
     file_put_contents($destination_file, "<?php\n return " . var_export($helper->getAuth(), true) . ";");
 
-    echo "Success! auth file '{$destination_file}' created.";
+    echo "Success! auth file '{$destination_file}' created.\n";
 } catch (Exception $e) {
-    echo $e;    
+    error_log($e);
 }
