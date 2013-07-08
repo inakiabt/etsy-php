@@ -1,5 +1,5 @@
 {
-    "name": "inakiabt/etsy",
+    "name": "inakiabt/etsy-php",
     "description": "Simple PHP API for Etsy",
     "license": "MIT",
     "authors": [
