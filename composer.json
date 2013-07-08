@@ -21,10 +21,5 @@
             "Etsy\\Mocks\\": "src/test/",
             "Etsy\\": "src/"
         }
-    },
-    "scripts": {
-        "post-autoload-dump": [
-            "Etsy\\PackageInstaller::postPackageInstall"
-        ]
-    }    
+    }
 }

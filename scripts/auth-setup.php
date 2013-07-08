@@ -16,7 +16,21 @@ if (empty($consumer_key) || empty($consumer_secret))
     exit(1);
 }
 
-require_once(dirname(realpath(__FILE__)) . '/../vendor/autoload.php');
+$isolated_autoload_file = dirname(realpath(__FILE__)) . '/../vendor/autoload.php';
+if (file_exists($isolated_autoload_file))
+{
+    require_once($isolated_autoload_file);
+} else {
+    $dependency_autoload_file = dirname(realpath(__FILE__)) . '/../../../autoload.php';
+    if (file_exists($dependency_autoload_file))
+    {
+        require_once($dependency_autoload_file);
+    } else {
+        error_log("Unable to find composer autoload");
+        exit(1);
+    }
+}
+
 
 use Etsy\EtsyClient;
 use Etsy\OAuthHelper;
