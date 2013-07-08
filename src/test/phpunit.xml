@@ -6,6 +6,7 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="true"
+         bootstrap="../../vendor/autoload.php"
 >
     <testsuites>
         <testsuite name="inakiabt/etsy test suite">
