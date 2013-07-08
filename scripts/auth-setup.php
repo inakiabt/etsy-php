@@ -12,17 +12,6 @@ require_once('../vendor/autoload.php');
 use Etsy\EtsyClient;
 use Etsy\OAuthHelper;
 
-$dirname = dirname(realpath(__FILE__));
-function autoload($class)
-{
-    global $dirname;
-
-    $class = str_replace('\\', '/', $class) . '.php';
-    $class = str_replace('Etsy/', $dirname . '/Etsy/', $class);
-    require_once($class);
-}
-spl_autoload_register("autoload");
-
 $client = new EtsyClient('AAAAAAAAAAAAAAAAA', 'AAAAAAAAAAAAAAAAA');
 $helper = new OAuthHelper($client);
 
