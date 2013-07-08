@@ -11,12 +11,12 @@ class PackageInstaller
 
         $config = $composer->getConfig();
 
-        $autoload_filepath = $config->get('vendor-dir') . '/autoload.php';
+        $autoload_filepath = realpath($config->get('vendor-dir')) . '/autoload.php';
 
         $destination_file  = dirname(realpath(__FILE__)) . '/../../scripts/autoload.php';
 
         $contents = "<?php require_once('{$autoload_filepath}');";
-        
+
         file_put_contents($destination_file, $contents);
     }
 }

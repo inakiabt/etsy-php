@@ -23,7 +23,7 @@
         }
     },
     "scripts": {
-        "post-package-install": [
+        "post-autoload-dump": [
             "Etsy\\PackageInstaller::postPackageInstall"
         ]
     }    
