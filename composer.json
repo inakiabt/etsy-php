@@ -1,0 +1,25 @@
+{
+    "name": "inakiabt/etsy",
+    "description": "Simple PHP API for Etsy",
+    "license": "MIT",
+    "authors": [
+    {
+        "name": "Iñaki Abete"
+    }
+    ],
+
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.5",
+        "phpunit/php-invoker": ">=1.1.0",
+        "phpunit/php-code-coverage": "1.2.6"
+    },
+    "autoload": {
+        "psr-0": {
+            "Etsy\\Mocks\\": "src/test/",
+            "Etsy\\": "src/"
+        }
+    }
+}
