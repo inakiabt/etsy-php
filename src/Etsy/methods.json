@@ -346,6 +346,7 @@
       "shop_section_id": "int",
       "image_ids": "array(int)",
       "non_taxable": "boolean",
+      "is_private": "boolean",
       "image": "image",
       "state": "enum(active, draft)",
       "processing_min": "int",

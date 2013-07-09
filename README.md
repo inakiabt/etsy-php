@@ -16,6 +16,8 @@ After all, it should looks like this:
 ```php
 <?php
  return array (
+  'consumer_key' => 'df7df6s5fdsf9sdh8gf9jhg98',
+  'consumer_secret' => 'sdgd6sd4d',
   'token_secret' => 'a1234567890qwertyu',
   'token' => '3j3j3h33h3g5',
   'access_token' => '8asd8as8gag5sdg4fhg4fjfgj',

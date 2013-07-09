@@ -34,6 +34,8 @@ class OAuthHelper
     public function getAuth()
     {
         $auth = array();
+        $auth['consumer_key'] = $this->client->getConsumerKey();
+        $auth['consumer_secret'] = $this->client->getConsumerSecret();
         $auth['token_secret'] = $this->request_token['oauth_token'];
         $auth['token'] = $this->request_token['oauth_token_secret'];
         $auth['access_token'] = $this->access_token['oauth_token'];

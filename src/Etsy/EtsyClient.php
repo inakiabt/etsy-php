@@ -12,8 +12,14 @@ class EtsyClient
 	private $authorized = false;
 	private $debug = true;
 
+	private $consumer_key = "";
+	private $consumer_scret = "";
+
 	function __construct($consumer_key, $consumer_secret)
 	{
+		$this->consumer_key = $consumer_key;
+		$this->consumer_secret = $consumer_secret;
+
 		$this->oauth = new \OAuth($consumer_key, $consumer_secret, OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_URI);
 	}
 
@@ -34,12 +40,12 @@ class EtsyClient
 	        {
 	        	$this->oauth->enableDebug();
 	        }
-	        $data = $this->oauth->fetch($this->base_url . $this->base_path . '/', $path, $params, $method);
+	        $data = $this->oauth->fetch($this->base_url . $this->base_path . '/' . $path, $params, $method);
 	        $response = $this->oauth->getLastResponse();
 	        
 	        return json_decode($response, !$json);
 	    } catch (\OAuthException $e) {
-	        throw new EtsyRequestException($e, $this->oauth->getLastResponse(), $this->ouath->getLastResponseInfo());
+	        throw new EtsyRequestException($e, $this->oauth->getLastResponse(), $this->oauth->getLastResponseInfo());
 	    }
 	}
 
@@ -63,6 +69,16 @@ class EtsyClient
 	    }
 
 	    return null;
+	}
+
+	public function getConsumerKey()
+	{
+		return $this->consumer_key;
+	}
+
+	public function getConsumerSecret()
+	{
+		return $this->consumer_secret;
 	}
 
 	public function setDebug($debug)
