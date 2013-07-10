@@ -45,7 +45,7 @@ class EtsyClient
 	        
 	        return json_decode($response, !$json);
 	    } catch (\OAuthException $e) {
-	        throw new EtsyRequestException($e, $this->oauth->getLastResponse(), $this->oauth->getLastResponseInfo());
+	        throw new EtsyRequestException($e, $this->oauth);
 	    }
 	}
 
@@ -54,7 +54,7 @@ class EtsyClient
 	    try {
 			return $this->oauth->getRequestToken($this->base_url . "/oauth/request_token", $permissions);
 	    } catch (\OAuthException $e) {
-	        throw new EtsyRequestException($e, $this->oauth->getLastResponse(), $this->oauth->getLastResponseInfo());
+	        throw new EtsyRequestException($e, $this->oauth);
 	    }
 
 	    return null;
@@ -65,7 +65,7 @@ class EtsyClient
 	    try {
 			return $this->oauth->getAccessToken($this->base_url . "/oauth/access_token", null, $verifier);
 	    } catch (\OAuthException $e) {
-	        throw new EtsyRequestException($e, $this->oauth->getLastResponse(), $this->oauth->getLastResponseInfo());
+	        throw new EtsyRequestException($e, $this->oauth);
 	    }
 
 	    return null;
@@ -94,23 +94,32 @@ class EtsyRequestException extends \Exception
 {
 	private $lastResponse;
 	private $lastResponseInfo;
+	private $lastResponseHeaders;
+	private $debugInfo;
+	private $exception;
 
-	function __construct($exception, $lastResponse, $lastResponseInfo)
+	function __construct($exception, $oauth)
 	{
-		$this->lastResponse = $lastResponse;
-		$this->lastResponseInfo = $this->lastResponseInfo;
+		$this->lastResponse = $oauth->getLastResponse();
+		$this->lastResponseInfo = $oauth->getLastResponseInfo();
+		$this->lastResponseHeaders = $oauth->getLastResponseHeaders();
+		$this->debugInfo = $oauth->debugInfo;
+		$this->exception = $exception;
 
-		$message = "{$exception->getMessage()}: " . 
+		parent::__construct($this->buildMessage(), 1, $exception);
+	}
+
+	private function buildMessage()
+	{
+		return $this->exception->getMessage().": " . 
 			print_r($this->lastResponse, true) .
-			print_r($this->lastResponseInfo, true);
-
-		parent::__construct($message, 1, $exception);
+			print_r($this->lastResponseInfo, true) .
+			// print_r($this->lastResponseHeaders, true) .
+			print_r($this->debugInfo, true);
 	}
 
 	public function __toString()
 	{
-		return __CLASS__ . ": [{$this->code}]: {$this->message}: " . 
-					print_r($this->lastResponse, true) .
-					print_r($this->lastResponseInfo, true);
+		return __CLASS__ . ": [{$this->code}]: ". $this->buildMessage();
 	}
 }
