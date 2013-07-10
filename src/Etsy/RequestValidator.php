@@ -74,7 +74,7 @@ class RequestValidator
 							$name = '@' . $name;
 							$arg = @$arg[0];
 						} else {
-							$type = 'array';
+							$name = $name . '[]';
 						}
 						break;
 				}
