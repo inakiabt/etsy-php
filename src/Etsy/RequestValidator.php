@@ -68,13 +68,26 @@ class RequestValidator
 						$type = 'float';
 						break;
 					case 'array':
-						if (preg_match('/@.*?;type=.*?\/.+$/', @$arg[0]))
+						if (count($arg) > 0)
 						{
-							$type = 'imagefile';
-							$name = '@' . $name;
-							$arg = @$arg[0];
-						} else {
-							$name = $name . '[]';
+							if (preg_match('/@.*?;type=.*?\/.+$/', @$arg[0]))
+							{
+								$type = 'imagefile';
+								$name = '@' . $name;
+								$arg = @$arg[0];
+							} else {
+								$item_type = gettype($arg[0]);
+								switch($item_type)
+								{
+									case 'integer':
+										$item_type = 'int';
+										break;
+									case 'double':
+										$item_type = 'float';
+										break;
+								}								
+								$type = 'array('.$item_type.')';
+							}
 						}
 						break;
 				}

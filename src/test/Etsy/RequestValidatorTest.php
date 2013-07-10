@@ -327,13 +327,13 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 		$method = 'createListing';
 		$args = array(
 			'data' => array(
-				'tags' => array('any', 'tag', 1)
+				'tags' => array('any, tag, other')
 			)
 		);
 
 		$result = RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
-		$this->assertEquals(array('tags[]' => array('any', 'tag', 1)), $result['_valid']);
+		$this->assertEquals($args['data'], $result['_valid']);
 	}
 
 	public function testDataValidEmptyArrayType()
@@ -348,7 +348,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$result = RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
-		$this->assertEquals(array('tags[]' => array()), $result['_valid']);
+		$this->assertEquals($args['data'], $result['_valid']);
 	}
 
 	public function testDataInvalidArrayType()
