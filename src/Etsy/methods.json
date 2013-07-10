@@ -347,7 +347,7 @@
       "image_ids": "array(int)",
       "non_taxable": "boolean",
       "is_private": "boolean",
-      "image": "image",
+      "image": "imagefile",
       "state": "enum(active, draft)",
       "processing_min": "int",
       "processing_max": "int",
