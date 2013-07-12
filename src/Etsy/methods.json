@@ -408,6 +408,7 @@
       "state": "enum(active, inactive, draft)",
       "image_ids": "array(int)",
       "non_taxable": "boolean",
+      "is_private": "boolean",
       "category_id": "int",
       "tags": "array(string)",
       "who_made": "enum(i_did, collective, someone_else)",
