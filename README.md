@@ -112,6 +112,10 @@ print_r($api->uploadListingImage($listing_image));
 
 ```
 
+## Testing ##
+```bash
+$ vendor/bin/phpunit src/test/
+```
 
 ## Changelog
 
