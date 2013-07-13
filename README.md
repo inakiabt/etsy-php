@@ -10,8 +10,20 @@ Based on [Etsy Rest API description](http://www.etsy.com/developers/documentatio
 * OAuth pecl package:
   * `sudo pecl install oauth`
   * And then add the line `extension=oauth.so` to your `php.ini`
-* Install dependecies:
-  * `php composer.phar install`
+
+## Installation
+
+The following recommended installation requires [composer](http://getcomposer.org/). If you are unfamiliar with composer see the [composer installation instructions](http://getcomposer.org/doc/01-basic-usage.md#installation).
+
+Add the following to your `composer.json` file:
+
+```json
+{  
+  "require": {
+    "inakiabt/etsy-php": "dev-master"
+  }
+}
+```
 
 ## Usage ##
 
