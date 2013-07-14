@@ -10,7 +10,7 @@ class OAuthHelper
     private $request_token = array();
     private $access_token = array();
 
-    function __construct($client)
+    function __construct(EtsyClient $client)
     {
         $this->client = $client;
     }

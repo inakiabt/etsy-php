@@ -12,7 +12,7 @@ class EtsyApi
 	private $methods = array();
 	private $returnJson = false;
 
-	function __construct($client, $methods_file = null)
+	function __construct(EtsyClient $client, $methods_file = null)
 	{
 		if ($methods_file === null)
 		{
@@ -27,12 +27,7 @@ class EtsyApi
 		$this->client = $client;
 	}
 
-	public function setReturnJson($returnJson)
-	{
-		$this->returnJson = $returnJson;
-	}
-
-	private function request($arguments)
+	private function request(array $arguments)
 	{
 		$method = $this->methods[$arguments['method']];
 		$args = $arguments['args'];
@@ -42,12 +37,28 @@ class EtsyApi
 		return $this->client->request($uri, @$args['data'], $method['http_method'], $this->returnJson);
 	}
 
+	public function getClient()
+	{
+		return $this->client;
+	}
+
+	public function setReturnJson(boolean $returnJson)
+	{
+		$this->returnJson = $returnJson;
+	}
+
+	public function getReturnJson()
+	{
+		return $this->returnJson;
+	}
+
 	/*
 	* array('params' => array(), 'data' => array())
 	* :params for uri params
 	* :data for "post fields"
 	*/
-	public function __call($method, $args) {
+	public function __call($method, $args)
+	{
 		if (isset($this->methods[$method]))
 		{
 			$validArguments = RequestValidator::validateParams(@$args[0], $this->methods[$method]);
@@ -68,5 +79,4 @@ class EtsyApi
 			throw new \Exception('Method "'.$method.'" not exists');
 		}
 	}
-
 }
