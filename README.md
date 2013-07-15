@@ -1,6 +1,67 @@
-# Scripts #
+# API #
 
-`scripts/auth-setup.php` will generate an OAuth config file required by the Etsy client to make requests.
+Based on [Etsy Rest API description](http://www.etsy.com/developers/documentation/reference/apimethod) output, this wrapper provides a simple client with all available methods on Etsy API (thanks to the `__call` magic PHP method!), validating its arguments on each request (Take a look to https://github.com/inakiabt/etsy-php/blob/master/src/Etsy/methods.json for full list of methods and its arguments).
+
+## Requirements
+
+Note: I will be working on remove this dependencies
+* cURL devel:
+  * Ubuntu: `sudo apt-get install libcurl4-dev`
+  * Fedora/CentOS: `sudo yum install curl-devel`
+* OAuth pecl package:
+  * `sudo pecl install oauth`
+  * And then add the line `extension=oauth.so` to your `php.ini`
+
+## Installation
+
+The following recommended installation requires [composer](http://getcomposer.org/). If you are unfamiliar with composer see the [composer installation instructions](http://getcomposer.org/doc/01-basic-usage.md#installation).
+
+Add the following to your `composer.json` file:
+
+```json
+{  
+  "require": {
+    "inakiabt/etsy-php": "dev-master"
+  }
+}
+```
+
+## Usage ##
+
+All methods has only one argument, an array with two items (both are optional, depends on the method):
+
+- *params*: an array with all required params to build the endpoint url.
+  > Example:
+  > [getSubSubCategory](http://www.etsy.com/developers/documentation/reference/category#method_getsubsubcategory): GET /categories/:tag/:subtag/:subsubtag
+```php
+  # it will request /categories/tag1/subtag1/subsubtag1
+  $api->getSubSubCategory(array(
+          'params' => array(
+                         'tag' => 'tag1',
+                         'subtag' => 'subtag1',
+                         'subsubtag' => 'subsubtag1'
+           )));
+```
+
+- *data*: an array with post data required by the method
+  > Example:
+  > [createShippingTemplate](http://www.etsy.com/developers/documentation/reference/shippingtemplate#method_createshippingtemplate): POST /shipping/templates
+```php
+  # it will request /shipping/templates sending the "data" array as the post data
+  $api->createShippingTemplate(array(
+    						'data' => array(
+   							    "title" => "First API Template",
+   							    "origin_country_id" => 209,
+   							    "destination_country_id" => 209,
+   							    "primary_cost" => 10.0,
+   							    "secondary_cost" => 10.0
+           )));
+```
+
+## OAuth configuration script ##
+Etsy API uses OAuth 1.0 authentication, so lets setup our credentials.
+
+The script `scripts/auth-setup.php` will generate an OAuth config file required by the Etsy client to make signed requests.
 Example:
 ```bash
 export ETSY_CONSUMER_KEY=qwertyuiop123456dfghj
@@ -24,3 +85,72 @@ After all, it should looks like this:
   'access_token_secret' => 'f8dgdf6gd5f4s',
 );
 ```
+
+## Initialization ##
+
+```php
+<?php
+require('vendor/autoload.php');
+$auth = require('/path/to/my-oauth-config-destination.php');
+
+$client = new Etsy\EtsyClient($auth['consumer_key'], $auth['consumer_secret']);
+$client->authorize($auth['access_token'], $auth['access_token_secret']);
+
+$api = new Etsy\EtsyApi($client);
+
+print_r($api->getUser(array('params' => array('user_id' => '__SELF__'))));
+```
+
+## Examples ##
+
+```php
+print_r($api->createShippingTemplate(array(
+ 						'data' => array(
+							    "title" => "First API Template",
+							    "origin_country_id" => 209,
+							    "destination_country_id" => 209,
+							    "primary_cost" => 10.0,
+							    "secondary_cost" => 10.0
+							))));
+
+# Upload local files: the item value must be an array with the first value as a string starting with "@":
+$listing_image = array(
+		'params' => array(
+			'listing_id' => '152326352'
+		),
+		'data' => array(
+			'image' => array('@/path/to/file.jpg;type=image/jpeg')
+));
+print_r($api->uploadListingImage($listing_image));
+
+```
+
+## Testing ##
+```bash
+$ vendor/bin/phpunit src/test/
+```
+
+## Changelog
+
+* 1.0
+  * Init commit, working module.
+
+## Author
+
+**Iñaki Abete**  
+web: http://github.com/inakiabt  
+email: inakiabt+github@gmail.com  
+twitter: @inakiabt  
+
+
+## Contribute
+
+Found a bug? Want to contribute and add a new feature?
+
+Please fork this project and send me a pull request!
+
+## License
+
+mobiledevice is licensed under the MIT license:
+
+www.opensource.org/licenses/MIT

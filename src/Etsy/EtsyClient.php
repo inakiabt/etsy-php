@@ -56,10 +56,21 @@ class EtsyClient
 	    }
 	}
 
-	public function getRequestToken($permissions = 'oob')
+	public function getRequestToken(array $extra = array())
 	{
+	    $url = $this->base_url . "/oauth/request_token";
+	    $callback = 'oob';
+	    if (isset($extra['scope']) && !empty($extra['scope']))
+	    {
+	    	$url .= '?scope=' . urlencode($extra['scope']);
+	    }
+	    
+	    if (isset($extra['callback']) && !empty($extra['callback']))
+	    {
+	    	$callback = $extra['callback'];
+	    }
 	    try {
-			return $this->oauth->getRequestToken($this->base_url . "/oauth/request_token", $permissions);
+		return $this->oauth->getRequestToken($url, $callback);
 	    } catch (\OAuthException $e) {
 	        throw new EtsyRequestException($e, $this->oauth);
 	    }
