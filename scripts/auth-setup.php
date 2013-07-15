@@ -39,9 +39,12 @@ $client = new EtsyClient($consumer_key, $consumer_secret);
 $helper = new OAuthHelper($client);
 
 try {
+    // In case you want to setup specific permissions pass a space separated) list of permissions
+    // Example: $helper->requestPermissionUrl('email_r profile_w recommend_rw')
+    // List of all allowed permissions: https://www.etsy.com/developers/documentation/getting_started/oauth#section_permission_scopes
     $url = $helper->requestPermissionUrl();
 
-    /// read user input for verifier
+    // read user input for verifier
     print "Please sign in to this url and paste the verifier below: $url \n";
 
     // on Mac OSX
