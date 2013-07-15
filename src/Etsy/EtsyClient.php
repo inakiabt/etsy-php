@@ -62,7 +62,7 @@ class EtsyClient
 	    $callback = 'oob';
 	    if (isset($extra['scope']) && !empty($extra['scope']))
 	    {
-	    	$url .= '&scope=' . $extra['scope'];
+	    	$url .= '?scope=' . urlencode($extra['scope']);
 	    }
 	    
 	    if (isset($extra['callback']) && !empty($extra['callback']))
