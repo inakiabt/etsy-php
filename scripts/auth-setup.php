@@ -45,7 +45,10 @@ try {
     print "Please sign in to this url and paste the verifier below: $url \n";
 
     // on Mac OSX
-    exec("open '" . $url . "'");
+    if (PHP_OS === 'Darwin')
+    {
+        exec("open '" . $url . "'");
+    }
 
     print '$ ';
     $verifier = trim(fgets(STDIN));
