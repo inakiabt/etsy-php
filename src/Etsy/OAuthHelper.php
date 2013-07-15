@@ -15,9 +15,9 @@ class OAuthHelper
         $this->client = $client;
     }
 
-    public function requestPermissionUrl($permissions = 'oob')
+    public function requestPermissionUrl(array $extra = array())
     {
-        $this->request_token = $this->client->getRequestToken($permissions);
+        $this->request_token = $this->client->getRequestToken($extra);
 
         return $this->request_token['login_url'];
     }
