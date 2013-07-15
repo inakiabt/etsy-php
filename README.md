@@ -4,6 +4,7 @@ Based on [Etsy Rest API description](http://www.etsy.com/developers/documentatio
 
 ## Requirements
 
+Note: I will be working on remove this dependencies
 * cURL devel:
   * Ubuntu: `sudo apt-get install libcurl4-dev`
   * Fedora/CentOS: `sudo yum install curl-devel`
