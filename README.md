@@ -1,6 +1,6 @@
 # API #
 
-Based on [Etsy Rest API description](http://www.etsy.com/developers/documentation/reference/apimethod), this wrapper provides a simple client with all available methods on Etsy API, validating its arguments on each request (Take a look to https://github.com/inakiabt/etsy-php/blob/master/src/Etsy/methods.json for full list of methods and its arguments).
+Based on [Etsy Rest API description](http://www.etsy.com/developers/documentation/reference/apimethod) output, this wrapper provides a simple client with all available methods on Etsy API, validating its arguments on each request (Take a look to https://github.com/inakiabt/etsy-php/blob/master/src/Etsy/methods.json for full list of methods and its arguments).
 
 ## Requirements
 
