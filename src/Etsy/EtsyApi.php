@@ -39,7 +39,55 @@ class EtsyApi
 
 		$uri = preg_replace('@:(.+?)(\/|$)@e', '$args["params"]["\\1"]."\\2"', $method['uri']);
 
+		if (!empty($args['associations']))
+		{
+			$uri .= '?includes=' . $this->prepareAssociations($args['associations']);
+		}
+
 		return $this->client->request($uri, @$args['data'], $method['http_method'], $this->returnJson);
+	}
+
+	private function prepareAssociations($associations)
+	{
+		$includes = array();
+		foreach ($associations as $key => $value)
+		{
+			if (is_array($value))
+			{
+				$includes[] = $this->buildAssociation($key, $value);
+			} else {
+				$includes[] = $value;
+			}
+		}
+
+		return implode(',', $includes);
+	}
+
+	private function buildAssociation($assoc, $conf)
+	{
+		$association = $assoc;
+		if (isset($conf['select']))
+		{
+			$association .= "(".implode(',', $conf['select']).")";
+		}
+		if (isset($conf['scope']))
+		{
+			$association .= ':' . $conf['scope'];
+		}
+		if (isset($conf['limit']))
+		{
+			$association .= ':' . $conf['limit'];
+		}
+		if (isset($conf['offset']))
+		{
+			$association .= ':' . $conf['offset'];
+		}
+		if (isset($conf['associations']))
+		{
+			$association .= '/' . $this->prepareAssociations($conf['associations']);
+		}
+
+		return $association;
 	}
 
 	/*
@@ -61,7 +109,8 @@ class EtsyApi
 																		'method' => $method,
 																		'args' => array(
 																					'data' => @$validArguments['_valid'],
-																					'params' => @$args[0]['params']
+																					'params' => @$args[0]['params'],
+																					'associations' => @$args[0]['associations']
 																					)
 																	)));
 		} else {

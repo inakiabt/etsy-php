@@ -134,4 +134,91 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 			)
 		));
 	}
+
+  	public function testSimpleAssociations()
+	{
+		$args = array(
+			'params' => array(
+				'listing_id' => 654321
+			),
+			'associations' => array(
+				'Images',
+				'ShippingInfo'
+			)
+		);
+
+		$result = $this->api->getListing($args);
+		$this->assertEquals($result, array(
+			'path' => '/listings/654321?includes=Images,ShippingInfo',
+			'data' => array(),
+			'method' => 'GET'));
+	}
+
+  	public function testComposedAssociations()
+	{
+		$args = array(
+			'params' => array(
+				'listing_id' => 654321
+			),
+			'associations' => array(
+				'ShippingInfo' => array( 
+					'scope' => 'active',
+					'limit' => 1,
+					'offset' => 0,
+					'select' => array('currency_code', 'primary_cost')
+				)
+			)
+		);
+
+		$result = $this->api->getListing($args);
+		$this->assertEquals($result, array(
+			'path' => '/listings/654321?includes=ShippingInfo(currency_code,primary_cost):active:1:0', 
+			'data' => array(),
+			'method' => 'GET'));
+	}
+
+  	public function testComposedOptionalParamsAssociations()
+	{
+		$args = array(
+			'params' => array(
+				'listing_id' => 654321
+			),
+			'associations' => array(
+				'ShippingInfo' => array( 
+					'limit' => 1,
+					'offset' => 0
+				)
+			)
+		);
+
+		$result = $this->api->getListing($args);
+		$this->assertEquals($result, array(
+			'path' => '/listings/654321?includes=ShippingInfo:1:0', 
+			'data' => array(),
+			'method' => 'GET'));
+	}
+
+  	public function testComposedSubAssociations()
+	{
+		$args = array(
+			'params' => array(
+				'listing_id' => 654321
+			),
+			'associations' => array(
+				'ShippingInfo' => array( 
+					'associations' => array(
+						'DestinationCountry' => array(
+							'select' => array('name', 'slug')
+						)
+					)
+				)
+			)
+		);
+
+		$result = $this->api->getListing($args);
+		$this->assertEquals($result, array(
+			'path' => '/listings/654321?includes=ShippingInfo/DestinationCountry(name,slug)', 
+			'data' => array(),
+			'method' => 'GET'));
+	}
 }

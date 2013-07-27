@@ -1,3 +1,5 @@
 vendor/
 composer.lock
 scripts/autoload.php
+test.php
+auth.php
