@@ -125,6 +125,37 @@ print_r($api->uploadListingImage($listing_image));
 
 ```
 
+## Asociations ##
+You would be able to fetch associations of given your resources using a simple interface:
+```php
+    $args = array(
+            'params' => array(
+                'listing_id' => 654321
+            ),
+            // A list of associations
+            'associations' => array(
+                // Could be a simple association, sending something like: ?includes=Images
+                'Images',
+                // Or a composed one with (all are optional as Etsy API says) "scope", "limit", "offset", "select" and sub-associations ("associations")
+                // ?includes=ShippingInfo(currency_code, primary_cost):active:1:0/DestinationCountry(name,slug)
+                'ShippingInfo' => array( 
+                    'scope' => 'active',
+                    'limit' => 1,
+                    'offset' => 0,
+                    'select' => array('currency_code', 'primary_cost'),
+                    // The only issue here is that sub-associations couldn't be more than one, I guess.
+                    'associations' => array(
+                        'DestinationCountry' => array(
+                            'select' => array('name', 'slug')
+                        )
+                    )
+                )
+            )
+        );
+   $result = $this->api->getListing($args);
+```
+To read more about associations: https://www.etsy.com/developers/documentation/getting_started/resources#section_associations
+
 ## Testing ##
 ```bash
 $ vendor/bin/phpunit src/test/
