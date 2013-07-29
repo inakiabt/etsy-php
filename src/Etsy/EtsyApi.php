@@ -44,7 +44,40 @@ class EtsyApi
 			$uri .= '?includes=' . $this->prepareAssociations($args['associations']);
 		}
 
-		return $this->client->request($uri, @$args['data'], $method['http_method'], $this->returnJson);
+		return $this->validateResponse( $args, $this->client->request($uri, @$args['data'], $method['http_method'], $this->returnJson) );
+	}
+
+	protected function validateResponse($request_args, $response)
+	{
+		if (!empty($request_args['associations']))
+		{
+			$results = $this->returnJson ? @$response->results : @$response['results'];
+			if (is_array($results))
+			{
+				foreach ($results as $result)
+				{
+					$error_messages = array();
+					if ($this->returnJson && isset($result->error_messages))
+					{
+						$error_messages = $result->error_messages;
+					} elseif (!$this->returnJson && isset($result['error_messages'])) {
+						$error_messages = $result['error_messages'];
+					}
+
+					if (!empty($error_messages))
+					{
+						foreach ($error_messages as $error_message)
+						{
+							if (preg_match('@^Access denied on association@', $error_message))
+							{
+								throw new EtsyResponseException('Invalid association: ' . $error_message, $response);
+							}
+						}
+					}
+				}
+			}
+		}
+		return $response;
 	}
 
 	private function prepareAssociations($associations)

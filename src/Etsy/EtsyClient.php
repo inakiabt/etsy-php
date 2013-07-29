@@ -108,6 +108,26 @@ class EtsyClient
 /**
 * 
 */
+class EtsyResponseException extends \Exception
+{
+	private $response = null;
+
+	function __construct($message, $response = array())
+	{
+		$this->response = $response;
+
+		parent::__construct($message);
+	}
+
+	public function getResponse()
+	{
+		return $this->response;
+	}
+}
+
+/**
+* 
+*/
 class EtsyRequestException extends \Exception
 {
 	private $lastResponse;
