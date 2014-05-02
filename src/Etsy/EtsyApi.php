@@ -37,7 +37,9 @@ class EtsyApi
 		$method = $this->methods[$arguments['method']];
 		$args = $arguments['args'];
 
-		$uri = preg_replace('@:(.+?)(\/|$)@e', '$args["params"]["\\1"]."\\2"', $method['uri']);
+		$uri = preg_replace_callback('@:(.+?)(\/|$)@', function($matches) use ($args) {
+			return $args["params"][$matches[1]].$matches[2];
+		}, $method['uri']);
 
 		if (!empty($args['associations']))
 		{
