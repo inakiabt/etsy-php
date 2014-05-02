@@ -6,7 +6,7 @@ namespace Etsy;
 */
 class EtsyClient
 {
-	private $base_url = "http://openapi.etsy.com/v2";
+	private $base_url = "https://openapi.etsy.com/v2";
 	private $base_path = "/private";
 	private $oauth = null;
 	private $authorized = false;
