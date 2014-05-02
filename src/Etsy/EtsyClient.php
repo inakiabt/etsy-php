@@ -13,7 +13,7 @@ class EtsyClient
 	private $debug = true;
 
 	private $consumer_key = "";
-	private $consumer_scret = "";
+	private $consumer_secret = "";
 
 	function __construct($consumer_key, $consumer_secret)
 	{
