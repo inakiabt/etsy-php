@@ -6,14 +6,14 @@ namespace Etsy;
 */
 class EtsyClient
 {
-	private $base_url = "http://openapi.etsy.com/v2";
+	private $base_url = "https://openapi.etsy.com/v2";
 	private $base_path = "/private";
 	private $oauth = null;
 	private $authorized = false;
 	private $debug = true;
 
 	private $consumer_key = "";
-	private $consumer_scret = "";
+	private $consumer_secret = "";
 
 	function __construct($consumer_key, $consumer_secret)
 	{

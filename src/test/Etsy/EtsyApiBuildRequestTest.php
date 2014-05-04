@@ -39,7 +39,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 
 		$result = $this->api->getCategory($args);
 		$this->assertEquals($result, array(
-			'path' => '/categories/fashion', 
+			'path' => '/categories/fashion',
 			'data' => array(),
 			'method' => 'GET'));
 	}
@@ -85,7 +85,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 
 		$result = $this->api->createListing($args);
 		$this->assertEquals($result, array(
-			'path' => '/listings', 
+			'path' => '/listings',
 			'data' => $args['data'],
 			'method' => 'POST'));
 	}
@@ -106,7 +106,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 
 		$result = $this->api->updateListing($args);
 		$this->assertEquals($result, array(
-			'path' => '/listings/654321', 
+			'path' => '/listings/654321',
 			'data' => $args['data'],
 			'method' => 'PUT'));
 	}
@@ -122,7 +122,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 			)
 		));
 	}
-    
+
     /**
      * @expectedException Exception
      */
@@ -161,7 +161,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 				'listing_id' => 654321
 			),
 			'associations' => array(
-				'ShippingInfo' => array( 
+				'ShippingInfo' => array(
 					'scope' => 'active',
 					'limit' => 1,
 					'offset' => 0,
@@ -172,7 +172,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 
 		$result = $this->api->getListing($args);
 		$this->assertEquals($result, array(
-			'path' => '/listings/654321?includes=ShippingInfo(currency_code,primary_cost):active:1:0', 
+			'path' => '/listings/654321?includes=ShippingInfo(currency_code,primary_cost):active:1:0',
 			'data' => array(),
 			'method' => 'GET'));
 	}
@@ -184,7 +184,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 				'listing_id' => 654321
 			),
 			'associations' => array(
-				'ShippingInfo' => array( 
+				'ShippingInfo' => array(
 					'limit' => 1,
 					'offset' => 0
 				)
@@ -193,7 +193,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 
 		$result = $this->api->getListing($args);
 		$this->assertEquals($result, array(
-			'path' => '/listings/654321?includes=ShippingInfo:1:0', 
+			'path' => '/listings/654321?includes=ShippingInfo:1:0',
 			'data' => array(),
 			'method' => 'GET'));
 	}
@@ -205,7 +205,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 				'listing_id' => 654321
 			),
 			'associations' => array(
-				'ShippingInfo' => array( 
+				'ShippingInfo' => array(
 					'associations' => array(
 						'DestinationCountry' => array(
 							'select' => array('name', 'slug')
@@ -217,8 +217,53 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 
 		$result = $this->api->getListing($args);
 		$this->assertEquals($result, array(
-			'path' => '/listings/654321?includes=ShippingInfo/DestinationCountry(name,slug)', 
+			'path' => '/listings/654321?includes=ShippingInfo/DestinationCountry(name,slug)',
 			'data' => array(),
 			'method' => 'GET'));
 	}
+
+	// Parameter Tests
+
+	public function testComposedParameters()
+	{
+		$args = array(
+			'params' => array(
+				'listing_id' => 654321,
+				'limit' => 10
+			),
+		);
+
+		$result = $this->api->getListing($args);
+		$this->assertEquals($result, array(
+			'path' => '/listings/654321?limit=10',
+			'data' => array(),
+			'method' => 'GET'));
+	}
+
+	public function testComposedParametersWithAssociation()
+	{
+		$args = array(
+			'params' => array(
+				'listing_id' => 654321,
+				'limit' => 10,
+				'offset' => 20,
+				'page' => 3
+			),
+			'associations' => array(
+				'ShippingInfo' => array(
+					'scope' => 'active',
+					'limit' => 1,
+					'offset' => 0,
+					'select' => array('currency_code', 'primary_cost')
+				)
+			)
+		);
+
+		$result = $this->api->getListing($args);
+		$this->assertEquals($result, array(
+			'path' => '/listings/654321?includes=ShippingInfo(currency_code,primary_cost):active:1:0&limit=10&offset=20&page=3',
+			'data' => array(),
+			'method' => 'GET'));
+	}
+
 }

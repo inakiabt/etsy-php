@@ -36,12 +36,20 @@ class EtsyApi
 	{
 		$method = $this->methods[$arguments['method']];
 		$args = $arguments['args'];
+		$params = $this->prepareParameters($args['params']);
 
-		$uri = preg_replace('@:(.+?)(\/|$)@e', '$args["params"]["\\1"]."\\2"', $method['uri']);
+		$uri = preg_replace_callback('@:(.+?)(\/|$)@', function($matches) use ($args) {
+			return $args["params"][$matches[1]].$matches[2];
+		}, $method['uri']);
 
 		if (!empty($args['associations']))
 		{
 			$uri .= '?includes=' . $this->prepareAssociations($args['associations']);
+		}
+
+		if(!empty($params)) {
+			$uri .= empty($args['associations']) ? "?" : "&";
+			$uri .= http_build_query($params);
 		}
 
 		return $this->validateResponse( $args, $this->client->request($uri, @$args['data'], $method['http_method'], $this->returnJson) );
@@ -78,6 +86,21 @@ class EtsyApi
 			}
 		}
 		return $response;
+	}
+
+	private function prepareParameters($params) {
+		$query_pairs = array();
+		$allowed = array("limit", "offset", "page", "sort_on", "sort_order", "include_private");
+
+		if ($params) {
+			foreach($params as $key=>$value) {
+				if (in_array($key, $allowed)) {
+					$query_pairs[$key] = $value;
+				}
+			}
+		}
+
+		return $query_pairs;
 	}
 
 	private function prepareAssociations($associations)
