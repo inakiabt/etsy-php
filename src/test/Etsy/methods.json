@@ -114,6 +114,18 @@
     "visibility": "public",
     "http_method": "GET"
   },
+  "findAllListingTransactions": {
+    "name": "findAllListingTransactions",
+    "description": "Finds all listings for a certain FeaturedTreasury.",
+    "uri": "/listings/:listing_id/transactions",
+    "params": {
+      "listing_id": "int"
+    },
+    "defaults": null,
+    "type": "Transaction",
+    "visibility": "private",
+    "http_method": "GET"
+  },
   "findAllActiveListingsForFeaturedTreasuryId": {
     "name": "findAllActiveListingsForFeaturedTreasuryId",
     "description": "Finds all active listings for a certain FeaturedTreasury.",
