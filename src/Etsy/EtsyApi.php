@@ -44,12 +44,12 @@ class EtsyApi
 
 		if (!empty($args['associations']))
 		{
-            $params['includes'] = $this->prepareAssociations($args['associations']);
+			$params['includes'] = $this->prepareAssociations($args['associations']);
 		}
 
 		if (!empty($args['fields']))
 		{
-            $params['fields'] = $this->prepareFields($args['fields']);
+			$params['fields'] = $this->prepareFields($args['fields']);
 		}
 
 		if(!empty($params)) {
