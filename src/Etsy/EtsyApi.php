@@ -4,7 +4,7 @@ namespace Etsy;
 use Etsy\RequestValidator;
 
 /**
-* 
+*
 */
 class EtsyApi
 {
@@ -44,12 +44,16 @@ class EtsyApi
 
 		if (!empty($args['associations']))
 		{
-			$uri .= '?includes=' . $this->prepareAssociations($args['associations']);
+            $params['includes'] = $this->prepareAssociations($args['associations']);
+		}
+
+		if (!empty($args['fields']))
+		{
+            $params['fields'] = $this->prepareFields($args['fields']);
 		}
 
 		if(!empty($params)) {
-			$uri .= empty($args['associations']) ? "?" : "&";
-			$uri .= http_build_query($params);
+			$uri .= "?" . http_build_query($params);
 		}
 
 		return $this->validateResponse( $args, $this->client->request($uri, @$args['data'], $method['http_method'], $this->returnJson) );
@@ -119,6 +123,12 @@ class EtsyApi
 		return implode(',', $includes);
 	}
 
+	private function prepareFields($fields)
+	{
+
+		return implode(',', $fields);
+	}
+
 	private function buildAssociation($assoc, $conf)
 	{
 		$association = $assoc;
@@ -166,7 +176,8 @@ class EtsyApi
 																		'args' => array(
 																					'data' => @$validArguments['_valid'],
 																					'params' => @$args[0]['params'],
-																					'associations' => @$args[0]['associations']
+																					'associations' => @$args[0]['associations'],
+																					'fields' => @$args[0]['fields']
 																					)
 																	)));
 		} else {
