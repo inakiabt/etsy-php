@@ -24,12 +24,12 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @expectedException Exception
 	 */
-  	public function testInvalidMethod()
+	public function testInvalidMethod()
 	{
 		$this->api->getInvalidMethod();
 	}
 
-  	public function testValidParams()
+	public function testValidParams()
 	{
 		$args = array(
 			'params' => array(
@@ -47,7 +47,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @expectedException Exception
 	 */
-  	public function testInvalidParams()
+	public function testInvalidParams()
 	{
 		$this->api->getCategory(array(
 			'params' => array(
@@ -56,7 +56,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 		));
 	}
 
-  	public function testValidData()
+	public function testValidData()
 	{
 		$args = array(
 			'data' => array(
@@ -90,7 +90,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 			'method' => 'POST'));
 	}
 
-  	public function testValidParamsAndData()
+	public function testValidParamsAndData()
 	{
 		$args = array(
 			'params' => array(
@@ -114,7 +114,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @expectedException Exception
 	 */
-  	public function testInvalidData()
+	public function testInvalidData()
 	{
 		$this->api->getCategory(array(
 			'data' => array(
@@ -126,7 +126,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @expectedException Exception
 	 */
-  	public function testInvalidDataType()
+	public function testInvalidDataType()
 	{
 		$this->api->getCategory(array(
 			'data' => array(
@@ -135,7 +135,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 		));
 	}
 
-  	public function testSimpleAssociations()
+	public function testSimpleAssociations()
 	{
 		$args = array(
 			'params' => array(
@@ -154,7 +154,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 			'method' => 'GET'));
 	}
 
-  	public function testComposedAssociations()
+	public function testComposedAssociations()
 	{
 		$args = array(
 			'params' => array(
@@ -177,7 +177,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 			'method' => 'GET'));
 	}
 
-  	public function testComposedOptionalParamsAssociations()
+	public function testComposedOptionalParamsAssociations()
 	{
 		$args = array(
 			'params' => array(
@@ -198,7 +198,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 			'method' => 'GET'));
 	}
 
-  	public function testComposedSubAssociations()
+	public function testComposedSubAssociations()
 	{
 		$args = array(
 			'params' => array(
@@ -262,6 +262,78 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 		$result = $this->api->getListing($args);
 		$this->assertEquals($result, array(
 			'path' => '/listings/654321?limit=10&offset=20&page=3&includes=' . urlencode('ShippingInfo(currency_code,primary_cost):active:1:0'),
+			'data' => array(),
+			'method' => 'GET'));
+	}
+
+	// Fields Tests
+
+	public function testComposedFields()
+	{
+		$args = array(
+			'fields' => array(
+				'listing_id',
+				'title'
+			)
+		);
+
+		$result = $this->api->findAllListingActive($args);
+		$this->assertEquals($result, array(
+			'path' => '/listings/active?fields=' . urlencode('listing_id,title'),
+			'data' => array(),
+			'method' => 'GET'));
+	}
+
+	public function testComposedFieldsWithAssociation()
+	{
+		$args = array(
+			'fields' => array(
+				'listing_id',
+				'title'
+			),
+			'associations' => array(
+				'ShippingInfo' => array(
+					'scope' => 'active',
+					'limit' => 1,
+					'offset' => 0,
+					'select' => array('currency_code', 'primary_cost')
+				)
+			)
+		);
+
+		$result = $this->api->findAllListingActive($args);
+		$this->assertEquals($result, array(
+			'path' => '/listings/active?includes=' . urlencode('ShippingInfo(currency_code,primary_cost):active:1:0') . '&fields=' . urlencode('listing_id,title'),
+			'data' => array(),
+			'method' => 'GET'));
+	}
+
+	public function testComposedFieldsWithAssociationAndParams()
+	{
+		$args = array(
+			'fields' => array(
+				'listing_id',
+				'title'
+			),
+			'params' => array(
+				'listing_id' => 654321,
+				'limit' => 10,
+				'offset' => 20,
+				'page' => 3
+			),
+			'associations' => array(
+				'ShippingInfo' => array(
+					'scope' => 'active',
+					'limit' => 1,
+					'offset' => 0,
+					'select' => array('currency_code', 'primary_cost')
+				)
+			)
+		);
+
+		$result = $this->api->getListing($args);
+		$this->assertEquals($result, array(
+			'path' => '/listings/654321?limit=10&offset=20&page=3&includes=' . urlencode('ShippingInfo(currency_code,primary_cost):active:1:0') . '&fields=' . urlencode('listing_id,title'),
 			'data' => array(),
 			'method' => 'GET'));
 	}
