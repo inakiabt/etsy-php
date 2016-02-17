@@ -19,7 +19,6 @@
     },
     "autoload": {
         "psr-0": {
-            "Etsy\\Mocks\\": "src/test/",
             "Etsy\\": "src/"
         }
     }
