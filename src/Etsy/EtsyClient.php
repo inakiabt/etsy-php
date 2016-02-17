@@ -2,7 +2,7 @@
 namespace Etsy;
 
 /**
-* 
+*
 */
 class EtsyClient
 {
@@ -21,7 +21,7 @@ class EtsyClient
 		$this->consumer_secret = $consumer_secret;
 
 		$this->oauth = new \OAuth($consumer_key, $consumer_secret, OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_URI);
-		if (defined(OAUTH_REQENGINE_CURL))
+		if (defined('OAUTH_REQENGINE_CURL'))
 		{
 			$this->oauth->setRequestEngine(OAUTH_REQENGINE_CURL);
 		} else {
@@ -49,7 +49,7 @@ class EtsyClient
 
 	        $data = $this->oauth->fetch($this->base_url . $this->base_path . $path, $params, $method);
 	        $response = $this->oauth->getLastResponse();
-	        
+
 	        return json_decode($response, !$json);
 	    } catch (\OAuthException $e) {
 	        throw new EtsyRequestException($e, $this->oauth, $params);
@@ -64,7 +64,7 @@ class EtsyClient
 	    {
 	    	$url .= '?scope=' . urlencode($extra['scope']);
 	    }
-	    
+
 	    if (isset($extra['callback']) && !empty($extra['callback']))
 	    {
 	    	$callback = $extra['callback'];
@@ -106,7 +106,7 @@ class EtsyClient
 }
 
 /**
-* 
+*
 */
 class EtsyResponseException extends \Exception
 {
@@ -126,7 +126,7 @@ class EtsyResponseException extends \Exception
 }
 
 /**
-* 
+*
 */
 class EtsyRequestException extends \Exception
 {
@@ -151,7 +151,7 @@ class EtsyRequestException extends \Exception
 
 	private function buildMessage()
 	{
-		return $this->exception->getMessage().": " . 
+		return $this->exception->getMessage().": " .
 			print_r($this->params, true) .
 			print_r($this->lastResponse, true) .
 			print_r($this->lastResponseInfo, true) .
