@@ -2,21 +2,18 @@
 
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
-         colors="true"
+         bootstrap="vendor/autoload.php"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="true"
-         bootstrap="../../vendor/autoload.php"
 >
     <testsuites>
         <testsuite name="inakiabt/etsy test suite">
-            <directory>./Etsy/</directory>
+            <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
 
-    <filter>
-        <whitelist>
-            <directory>../Etsy</directory>
-        </whitelist>
-    </filter>
 </phpunit>
