@@ -18,8 +18,8 @@
         "phpunit/php-code-coverage": "1.2.6"
     },
     "autoload": {
-        "psr-0": {
-            "Etsy\\": "src/"
+        "psr-4": {
+            "Etsy\\": "src/Etsy/"
         }
     }
 }
