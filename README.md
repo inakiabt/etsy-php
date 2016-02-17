@@ -1,4 +1,4 @@
-# API #
+# Etsy PHP SDK [![Build Status](https://travis-ci.org/inakiabt/etsy-php.svg?branch=master)](https://travis-ci.org/inakiabt/etsy-php)
 
 Based on [Etsy Rest API description](http://www.etsy.com/developers/documentation/reference/apimethod) output, this wrapper provides a simple client with all available methods on Etsy API (thanks to the `__call` magic PHP method!), validating its arguments on each request (Take a look to https://github.com/inakiabt/etsy-php/blob/master/src/Etsy/methods.json for full list of methods and its arguments).
 
@@ -19,7 +19,7 @@ The following recommended installation requires [composer](http://getcomposer.or
 Add the following to your `composer.json` file:
 
 ```json
-{  
+{
   "require": {
     "inakiabt/etsy-php": "dev-master"
   }
@@ -138,7 +138,7 @@ You would be able to fetch associations of given your resources using a simple i
                 'Images',
                 // Or a composed one with (all are optional as Etsy API says) "scope", "limit", "offset", "select" and sub-associations ("associations")
                 // ?includes=ShippingInfo(currency_code, primary_cost):active:1:0/DestinationCountry(name,slug)
-                'ShippingInfo' => array( 
+                'ShippingInfo' => array(
                     'scope' => 'active',
                     'limit' => 1,
                     'offset' => 0,
@@ -168,10 +168,10 @@ $ vendor/bin/phpunit src/test/
 
 ## Author
 
-**Iñaki Abete**  
-web: http://github.com/inakiabt  
-email: inakiabt+github@gmail.com  
-twitter: @inakiabt  
+**Iñaki Abete**
+web: http://github.com/inakiabt
+email: inakiabt+github@gmail.com
+twitter: @inakiabt
 
 
 ## Contribute
