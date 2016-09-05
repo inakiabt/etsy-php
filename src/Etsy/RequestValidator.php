@@ -98,7 +98,7 @@ class RequestValidator
 				{
 					if( $validType === "boolean" && $type === "string" )
 					{
-						if( $arg === "false" || $arg === "true" )
+						if( $arg === "false" || $arg === "true" || $arg === "0" || $arg === "1")
 						{
 							$result['_valid'][$name] = $arg;
 						}
