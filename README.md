@@ -21,7 +21,7 @@ Add the following to your `composer.json` file:
 ```json
 {
   "require": {
-    "inakiabt/etsy-php": "dev-master"
+    "inakiabt/etsy-php": ">=0.9.0"
   }
 }
 ```
