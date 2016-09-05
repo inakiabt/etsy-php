@@ -752,7 +752,7 @@
       "property_id": "int",
       "value": "string",
       "is_available": "boolean",
-      "price": "int"
+      "price": "float"
     },
     "defaults": {
       "is_available": true,
@@ -771,7 +771,7 @@
       "property_id": "int",
       "value": "string",
       "is_available": "boolean",
-      "price": "int"
+      "price": "float"
     },
     "defaults": {
       "price": null
