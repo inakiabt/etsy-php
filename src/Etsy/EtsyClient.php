@@ -102,6 +102,10 @@ class EtsyClient
 		return $this->consumer_secret;
 	}
 
+	public function getLastResponseHeaders(){
+        	return $this->oauth->getLastResponseHeaders();
+    	}
+    	
 	public function setDebug($debug)
 	{
 		$this->debug = $debug;
