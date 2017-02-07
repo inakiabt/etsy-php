@@ -1,39 +1,34 @@
 <?php
 namespace Etsy;
 
-use Etsy\RequestValidator;
+use Etsy\Validator\RequestValidator;
 
 /**
 *
 */
-class EtsyApi
-{
+class Api {
 	private $client;
 	private $methods = array();
 	private $returnJson = false;
 
-	function __construct($client, $methods_file = null)
-	{
-		if ($methods_file === null)
-		{
-			$methods_file = dirname(realpath(__FILE__)) . '/methods.json';
+	function __construct($client, $methods_file = null) {
+		if ($methods_file === null) {
+			$methods_file = dirname(realpath(__FILE__)) . '/../methods.json';
 		}
 
-		if (!file_exists($methods_file))
-		{
+		if (!file_exists($methods_file)) {
 			exit("Etsy methods file '{$methods_file}' does not exist!");
 		}
 		$this->methods = json_decode(file_get_contents($methods_file), true);
 		$this->client = $client;
 	}
 
-	public function setReturnJson($returnJson)
-	{
+	public function setReturnJson($returnJson) {
 		$this->returnJson = $returnJson;
 	}
 
-	private function request($arguments)
-	{
+	private function request($arguments) {
+		print_r($arguments);
 		$method = $this->methods[$arguments['method']];
 		$args = $arguments['args'];
 		$params = $this->prepareParameters($args['params']);
@@ -42,46 +37,38 @@ class EtsyApi
 			return $args["params"][$matches[1]].$matches[2];
 		}, $method['uri']);
 
-		if (!empty($args['associations']))
-		{
+		if (!empty($args['associations'])) {
 			$params['includes'] = $this->prepareAssociations($args['associations']);
 		}
 
-		if (!empty($args['fields']))
-		{
+		if (!empty($args['fields'])) {
 			$params['fields'] = $this->prepareFields($args['fields']);
 		}
 
 		if(!empty($params)) {
 			$uri .= "?" . http_build_query($params);
 		}
+		var_dump($uri);
+		var_dump($args['data']);
 
 		return $this->validateResponse( $args, $this->client->request($uri, @$args['data'], $method['http_method'], $this->returnJson) );
 	}
 
-	protected function validateResponse($request_args, $response)
-	{
-		if (!empty($request_args['associations']))
-		{
+	protected function validateResponse($request_args, $response) {
+		if (!empty($request_args['associations'])) {
 			$results = $this->returnJson ? @$response->results : @$response['results'];
-			if (is_array($results))
-			{
-				foreach ($results as $result)
-				{
+			if (is_array($results)) {
+				foreach ($results as $result) {
 					$error_messages = array();
-					if ($this->returnJson && isset($result->error_messages))
-					{
+					if ($this->returnJson && isset($result->error_messages)) {
 						$error_messages = $result->error_messages;
 					} elseif (!$this->returnJson && isset($result['error_messages'])) {
 						$error_messages = $result['error_messages'];
 					}
 
-					if (!empty($error_messages))
-					{
-						foreach ($error_messages as $error_message)
-						{
-							if (preg_match('@^Access denied on association@', $error_message))
-							{
+					if (!empty($error_messages)) {
+						foreach ($error_messages as $error_message) {
+							if (preg_match('@^Access denied on association@', $error_message)) {
 								throw new EtsyResponseException('Invalid association: ' . $error_message, $response);
 							}
 						}
@@ -107,13 +94,10 @@ class EtsyApi
 		return $query_pairs;
 	}
 
-	private function prepareAssociations($associations)
-	{
+	private function prepareAssociations($associations) {
 		$includes = array();
-		foreach ($associations as $key => $value)
-		{
-			if (is_array($value))
-			{
+		foreach ($associations as $key => $value) {
+			if (is_array($value)) {
 				$includes[] = $this->buildAssociation($key, $value);
 			} else {
 				$includes[] = $value;
@@ -123,33 +107,26 @@ class EtsyApi
 		return implode(',', $includes);
 	}
 
-	private function prepareFields($fields)
-	{
+	private function prepareFields($fields) {
 
 		return implode(',', $fields);
 	}
 
-	private function buildAssociation($assoc, $conf)
-	{
+	private function buildAssociation($assoc, $conf) {
 		$association = $assoc;
-		if (isset($conf['select']))
-		{
+		if (isset($conf['select'])) {
 			$association .= "(".implode(',', $conf['select']).")";
 		}
-		if (isset($conf['scope']))
-		{
+		if (isset($conf['scope'])) {
 			$association .= ':' . $conf['scope'];
 		}
-		if (isset($conf['limit']))
-		{
+		if (isset($conf['limit'])) {
 			$association .= ':' . $conf['limit'];
 		}
-		if (isset($conf['offset']))
-		{
+		if (isset($conf['offset'])) {
 			$association .= ':' . $conf['offset'];
 		}
-		if (isset($conf['associations']))
-		{
+		if (isset($conf['associations'])) {
 			$association .= '/' . $this->prepareAssociations($conf['associations']);
 		}
 
@@ -162,11 +139,9 @@ class EtsyApi
 	* :data for "post fields"
 	*/
 	public function __call($method, $args) {
-		if (isset($this->methods[$method]))
-		{
+		if (isset($this->methods[$method])) {
 			$validArguments = RequestValidator::validateParams(@$args[0], $this->methods[$method]);
-			if (isset($validArguments['_invalid']))
-			{
+			if (isset($validArguments['_invalid'])) {
 				throw new \Exception('Invalid params for method "'.$method.'": ' . implode(', ', $validArguments['_invalid']) . ' - ' . json_encode($this->methods[$method]));
 			}
 

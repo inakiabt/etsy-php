@@ -1,0 +1,22 @@
+version: '2'
+services:
+    with_oauth_extension:
+        build:
+            dockerfile: ./Dockerfile-OAuth-Extension
+            context: .
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - .:/tmp/etsy-php
+            # - ./src:/tmp/etsy-php/src
+            # - ./tests:/tmp/etsy-php/tests
+            # - ./vendor:/tmp/etsy-php/vendor
+        tty: true
+
+    # without_oauth_extension:
+    #     build:
+    #         context: ./docker/No-OAuth-Extension-Dockerfile
+    #     volumes:
+    #         - ./src:/tmp/etsy-php/src
+    #         - ./tests:/tmp/etsy-php/tests
+    #     tty: true
+

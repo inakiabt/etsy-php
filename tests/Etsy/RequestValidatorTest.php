@@ -14,11 +14,11 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$methods_file = dirname(realpath(__FILE__)) . '/methods.json';
+		$methods_file = dirname(realpath(__FILE__)) . '/../../src/methods.json';
 
 		if (!file_exists($methods_file))
 		{
-			exit("'{$methods}' not exists");
+			exit("'{$methods_file}' not exists");
 		}
 		$this->methods = json_decode(file_get_contents($methods_file), true);
 	}
@@ -28,7 +28,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 		$method = 'getMethodTable';
 		$args = array();
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 	}
 
@@ -37,7 +37,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 		$method = 'invalidEtsyMethod';
 		$args = array();
 
-		$result = RequestValidator::validateParams($args, @$this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, @$this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertEquals('Method not found', $result['_invalid'][0]);
@@ -55,7 +55,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 	}
 
@@ -69,7 +69,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(2, $result['_invalid']);
 	}
@@ -80,7 +80,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 		$method = 'findAllCountry';
 		$args = array();
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 	}
 
@@ -90,7 +90,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 		$method = 'getCategory';
 		$args = array();
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->requiredParametersRegExp, $result['_invalid'][0]);
@@ -106,7 +106,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->requiredParamRegExp, $result['_invalid'][0]);
@@ -146,7 +146,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 	}
 
@@ -160,7 +160,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->unrecognizedDataRegExp, $result['_invalid'][0]);
@@ -176,7 +176,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertEquals($args['data'], $result['_valid']);
 	}
@@ -191,7 +191,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->invalidTypeRegExp, $result['_invalid'][0]);
@@ -207,7 +207,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertEquals($args['data'], $result['_valid']);
 	}
@@ -222,7 +222,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->invalidTypeRegExp, $result['_invalid'][0]);
@@ -238,7 +238,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertEquals($args['data'], $result['_valid']);
 	}
@@ -253,7 +253,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->invalidTypeRegExp, $result['_invalid'][0]);
@@ -269,7 +269,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertEquals($args['data'], $result['_valid']);
 	}
@@ -284,7 +284,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->invalidEnumTypeRegExp, $result['_invalid'][0]);
@@ -300,7 +300,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertEquals($args['data'], $result['_valid']);
 	}
@@ -315,7 +315,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->invalidTypeRegExp, $result['_invalid'][0]);
@@ -331,7 +331,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertEquals($args['data'], $result['_valid']);
 	}
@@ -346,7 +346,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertEquals($args['data'], $result['_valid']);
 	}
@@ -361,7 +361,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->invalidTypeRegExp, $result['_invalid'][0]);
@@ -390,7 +390,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertEquals(array('@image' => '@file.jpg;type=image/jpeg'), $result['_valid']);
 	}
@@ -408,7 +408,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 
-		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$result = Validator\RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->invalidTypeRegExp, $result['_invalid'][0]);

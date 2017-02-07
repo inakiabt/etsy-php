@@ -1,0 +1,18 @@
+FROM php:5.5-cli
+
+MAINTAINER Iñaki Abete <inakiabt@gmail.com>
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install --no-install-recommends -y libcurl4-openssl-dev zlib1g-dev \
+    && pecl install oauth-1.2.3 zip \
+    && docker-php-ext-enable oauth zip \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# COPY ./composer.json /tmp/etsy-php/
+# COPY ./composer.lock /tmp/etsy-php/
+
+# RUN cd /tmp/etsy-php && /usr/local/bin/composer install --no-scripts --prefer-dist
+
+RUN echo "date.timezone = America/Argentina/Buenos_Aires" > /usr/local/etc/php/conf.d/timezone.ini
+WORKDIR /tmp/etsy-php
+
+# ENTRYPOINT ["/tmp/etsy-php/vendor/bin/phpunit"]

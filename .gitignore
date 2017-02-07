@@ -1,4 +1,4 @@
 vendor/
-scripts/autoload.php
-test.php
-auth.php
+test*.php
+config.php
+/config*.php

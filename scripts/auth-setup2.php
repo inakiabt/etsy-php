@@ -28,9 +28,9 @@ if (file_exists($isolated_autoload_file)) {
 }
 
 
-use Etsy\Client;
+use Etsy\Client2;
 
-$client = new Client($consumer_key, $consumer_secret, $destination_file);
+$client = new Client2($consumer_key, $consumer_secret, $destination_file);
 
 try {
     // In case you want to setup specific permissions, pass a list of permissions
@@ -53,7 +53,7 @@ try {
     print '$ ';
     $verifier = trim(fgets(STDIN));
 
-    $client->getAccessToken($request_token['oauth_token'], $verifier);
+    file_put_contents($destination_file, serialize($client->getAccessToken($request_token, $verifier)));
 
     echo "Success! auth file '{$destination_file}' created.\n";
 } catch (Exception $e) {

@@ -10,7 +10,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 		parent::setUp();
 
 		$client = new Mocks\EtsyClientMock(null, null);
-		$this->api = new EtsyApi($client);
+		$this->api = new Api($client);
 	}
 
 	public function testValidMethod()
@@ -76,7 +76,7 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 				"tags" => array('fashion, othertag'),
 				"who_made" => "collective",
 				"is_supply" => true,
-				"when_made" => "2010_2015",
+				"when_made" => "2000_2009",
 				"recipient" => "men",
 				"occasion" => "baptism",
 				"style" => array('style1, style2')
