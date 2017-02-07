@@ -42,10 +42,9 @@ class Client2 extends AbstractClient {
 
 	public function request($path, $params = array(), $method = 'GET', $json = true) {
 		try {
-			$request = $this->oauth->createRequest($method, $this->base_url . $this->base_path . $path, array(), array(), array(
+			$request = $this->oauth->createRequest($method, $this->base_url . $this->base_path . $path, array(), $params, array(
 				'debug' => true
 			));
-			$request->setBody($params);
 	        return $request->send()->json();
 	    } catch (\Exception $e) {
 	    	$header = $e->getResponse()->getHeader('x-error-detail');
