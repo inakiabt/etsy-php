@@ -52,7 +52,9 @@ class RequestValidator
 			$result['_invalid'][] = 'Method not found';
 			return $result;
 		}
+
 		$methodsParams = $methodInfo['params'];
+
 		foreach ($args as $name => $arg)
 		{
 			if (isset($methodsParams[$name]))
@@ -85,16 +87,26 @@ class RequestValidator
 									case 'double':
 										$item_type = 'float';
 										break;
-								}								
+								}
 								$type = 'array('.$item_type.')';
 							}
 						}
 						break;
 				}
+
 				if ($validType !== $type)
 				{
-					if (substr($validType, 0, 4) === 'enum')
+					if( $validType === "boolean" && $type === "string" )
 					{
+						if( $arg === "false" || $arg === "true" || $arg === "0" || $arg === "1")
+						{
+							$result['_valid'][$name] = $arg;
+						}
+						else
+						{
+							$result['_invalid'][] = RequestValidator::invalidParam($name, $arg, gettype($arg));
+						}
+					} elseif (substr($validType, 0, 4) === 'enum') {
 						if ($arg === 'enum' || !preg_match("@".preg_quote($arg)."@", $validType))
 						{
 							$result['_invalid'][] = 'Invalid enum data param "'.$name.'" value ('.$arg.'): valid values "'.$validType.'"';
