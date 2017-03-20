@@ -2,6 +2,9 @@
 
 Based on [Etsy Rest API description](http://www.etsy.com/developers/documentation/reference/apimethod) output, this wrapper provides a simple client with all available methods on Etsy API (thanks to the `__call` magic PHP method!), validating its arguments on each request (Take a look to https://github.com/inakiabt/etsy-php/blob/master/src/Etsy/methods.json for full list of methods and its arguments).
 
+## I'm looking for help 
+Lately, I couldn't dedicate the time I think this repo deserved, so I'm looking for help!
+
 ## Requirements
 
 Note: I will be working on remove this dependencies
@@ -21,7 +24,7 @@ Add the following to your `composer.json` file:
 ```json
 {
   "require": {
-    "inakiabt/etsy-php": "dev-master"
+    "inakiabt/etsy-php": ">=0.9.0"
   }
 }
 ```
