@@ -24,8 +24,10 @@ class EtsyClient
 
 		if (defined('OAUTH_REQENGINE_CURL'))
 		{
-			$this->oauth->setRequestEngine(OAUTH_REQENGINE_CURL);
-		} elseif(defined('OAUTH_REQENGINE_STREAMS')) {
+            $this->engine = OAUTH_REQENGINE_CURL;
+            $this->oauth->setRequestEngine(OAUTH_REQENGINE_CURL);
+        } elseif(defined('OAUTH_REQENGINE_STREAMS')) {
+            $this->engine = OAUTH_REQENGINE_STREAMS;
 			$this->oauth->setRequestEngine( OAUTH_REQENGINE_STREAMS );
 		} else {
 			error_log("Warning: cURL engine not present on OAuth PECL package: sudo apt-get install libcurl4-dev or sudo yum install curl-devel");
@@ -44,6 +46,13 @@ class EtsyClient
 		{
 			throw new \Exception('Not authorized. Please, authorize this client with $client->authorize($access_token, $access_token_secret)');
 		}
+        if ($this->engine === OAUTH_REQENGINE_STREAMS) {
+            foreach ($params as $key => $value) {
+                if (substr($key, 0, 1) === '@') {
+                    throw new \Exception('Uploading files using php_streams request engine is not supported', 1);
+                }
+            }
+        }
 	    try {
 	    	if ($this->debug === true)
 	        {
@@ -105,7 +114,7 @@ class EtsyClient
 	public function getLastResponseHeaders(){
         	return $this->oauth->getLastResponseHeaders();
     	}
-    	
+
 	public function setDebug($debug)
 	{
 		$this->debug = $debug;
