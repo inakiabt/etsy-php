@@ -68,6 +68,11 @@ class RequestValidator
 						$type = 'float';
 						break;
 					case 'array':
+						if (@array_key_exists('json', $arg)) {
+							$type = 'json';
+							$arg = $arg['json'];
+							break;
+						}
 						if (count($arg) > 0)
 						{
 							if (preg_match('/@.*?;type=.*?\/.+$/', @$arg[0]))
@@ -76,7 +81,7 @@ class RequestValidator
 								$name = '@' . $name;
 								$arg = @$arg[0];
 							} else {
-								$item_type = gettype($arg[0]);
+								$item_type = @gettype($arg[0]);
 								switch($item_type)
 								{
 									case 'integer':
@@ -85,11 +90,12 @@ class RequestValidator
 									case 'double':
 										$item_type = 'float';
 										break;
-								}								
+								}
 								$type = 'array('.$item_type.')';
 							}
 						}
 						break;
+
 				}
 				if ($validType !== $type)
 				{
@@ -103,6 +109,9 @@ class RequestValidator
 						}
 					} elseif ($type === 'array' && substr($validType, 0, 5) === 'array' ||
 							$type === 'string' && $validType === 'text')
+					{
+						$result['_valid'][$name] = $arg;
+					} elseif ($type === 'json' && substr($validType, 0, 5) === 'array')
 					{
 						$result['_valid'][$name] = $arg;
 					} else {

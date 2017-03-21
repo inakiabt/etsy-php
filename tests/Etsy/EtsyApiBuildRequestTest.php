@@ -111,6 +111,38 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 			'method' => 'PUT'));
 	}
 
+	public function testValidJsonDataParam()
+	{
+		$args = array(
+			'params' => array(
+				'listing_id' => 654321
+			),
+			'data' => array(
+				"variations" => array(
+					'json' => json_encode(
+			            array(
+			              array(
+			                'property_id' => 200,
+			                'value' => "Black"
+			              ),
+			              array(
+			                'property_id' => 200,
+			                'value' => "White"
+			              )
+			            )
+			        )
+				)
+			)
+		);
+
+		$result = $this->api->createListingVariations($args);
+		$args['data']['variations'] = $args['data']['variations']['json'];
+		$this->assertEquals($result, array(
+			'path' => '/listings/654321/variations',
+			'data' => $args['data'],
+			'method' => 'POST'));
+	}
+
 	/**
 	 * @expectedException Exception
 	 */
