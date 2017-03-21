@@ -2,7 +2,7 @@
 
 Based on [Etsy Rest API description](http://www.etsy.com/developers/documentation/reference/apimethod) output, this wrapper provides a simple client with all available methods on Etsy API (thanks to the `__call` magic PHP method!), validating its arguments on each request (Take a look to https://github.com/inakiabt/etsy-php/blob/master/src/Etsy/methods.json for full list of methods and its arguments).
 
-## I'm looking for help 
+## I'm looking for help
 Lately, I couldn't dedicate the time I think this repo deserved, so I'm looking for help!
 
 ## Requirements
@@ -158,6 +158,34 @@ You would be able to fetch associations of given your resources using a simple i
    $result = $this->api->getListing($args);
 ```
 To read more about associations: https://www.etsy.com/developers/documentation/getting_started/resources#section_associations
+
+## JSON params ##
+There are some methods that Etsy requires to be a JSON string encoded param (ie: param "variations" for "createListingVariations"). For these cases, those params should be defined like this:
+```php
+    $args = array(
+        'params' => array(
+            'listing_id' => 654321
+        ),
+        'data' => array(
+          'variations' => array(
+            'json' => json_encode(
+                array(
+                    array(
+                        'property_id' => 200,
+                        'value' => "Black"
+                    ),
+                    array(
+                        'property_id' => 200,
+                        'value' => "White"
+                    )
+                )
+            )
+        )
+      )
+    );
+
+    $result = $this->api->createListingVariations($args);
+```
 
 ## Testing ##
 ```bash
