@@ -44,6 +44,17 @@ class RequestValidator
 		return $result;
 	}
 
+	protected static function transformValueType($type) {
+		switch($type)
+		{
+			case 'integer':
+				return 'int';
+			case 'double':
+				return 'float';
+		}
+		return $type;
+	}
+
 	public static function validateData($args, $methodInfo)
 	{
 		$result = array('_valid' => array());
@@ -58,39 +69,35 @@ class RequestValidator
 			if (isset($methodsParams[$name]))
 			{
 				$validType = $methodsParams[$name];
-				$type = gettype($arg);
+				$type = self::transformValueType(gettype($arg));
 				switch($type)
 				{
-					case 'integer':
-						$type = 'int';
-						break;
-					case 'double':
-						$type = 'float';
-						break;
 					case 'array':
 						if (@array_key_exists('json', $arg)) {
 							$type = 'json';
 							$arg = $arg['json'];
 							break;
 						}
+
 						if (count($arg) > 0)
 						{
+							if (preg_match('@^map\(@', $validType)) {
+								$valueTypes = array();
+								foreach ($arg as $value)
+								{
+									$valueTypes[] = self::transformValueType(gettype($value));
+								}
+								$type = 'map(' . implode($valueTypes, ', ') . ')';
+								break;
+							}
+
 							if (preg_match('/@.*?;type=.*?\/.+$/', @$arg[0]))
 							{
 								$type = 'imagefile';
 								$name = '@' . $name;
 								$arg = @$arg[0];
 							} else {
-								$item_type = @gettype($arg[0]);
-								switch($item_type)
-								{
-									case 'integer':
-										$item_type = 'int';
-										break;
-									case 'double':
-										$item_type = 'float';
-										break;
-								}
+								$item_type = self::transformValueType(@gettype($arg[0]));
 								$type = 'array('.$item_type.')';
 							}
 						}
