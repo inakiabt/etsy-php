@@ -73,10 +73,11 @@ class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
 				"processing_min" => 123456,
 				"processing_max" => 123456,
 				"category_id" => 123456,
+				"taxonomy_id" => 123456,
 				"tags" => array('fashion, othertag'),
 				"who_made" => "collective",
 				"is_supply" => true,
-				"when_made" => "2010_2015",
+				"when_made" => "2000_2009",
 				"recipient" => "men",
 				"occasion" => "baptism",
 				"style" => array('style1, style2')
