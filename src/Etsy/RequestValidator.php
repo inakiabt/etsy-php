@@ -121,7 +121,10 @@ class RequestValidator
 					} elseif ($type === 'json' && substr($validType, 0, 5) === 'array')
 					{
 						$result['_valid'][$name] = $arg;
-					} else {
+					} elseif ($type === 'json' && substr($validType, 0, 6) === 'string')
+          {
+          	$result['_valid'][$name] = $arg;
+          } else {
 						$result['_invalid'][] = RequestValidator::invalidParamType($name, $arg, $type, $validType);
 					}
 				} else {
