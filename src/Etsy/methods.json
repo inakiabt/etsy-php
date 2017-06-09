@@ -759,9 +759,9 @@
     "params": {
       "listing_id": "int",
       "products": "stringJSON",
-      "price_on_property": "array(int)",
-      "quantity_on_property": "array(int)",
-      "sku_on_property": "array(int)"
+      "price_on_property": "string",
+      "quantity_on_property": "string",
+      "sku_on_property": "string"
     },
     "defaults": {
       "price_on_property": null,
