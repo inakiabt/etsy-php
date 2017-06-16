@@ -37,6 +37,7 @@ class EtsyApi
 		$method = $this->methods[$arguments['method']];
 		$args = $arguments['args'];
 		$params = $this->prepareParameters($args['params']);
+		$data = @$this->prepareData($args['data']);
 
 		$uri = preg_replace_callback('@:(.+?)(\/|$)@', function($matches) use ($args) {
 			return $args["params"][$matches[1]].$matches[2];
@@ -56,7 +57,7 @@ class EtsyApi
 			$uri .= "?" . http_build_query($params);
 		}
 
-		return $this->validateResponse( $args, $this->client->request($uri, @$args['data'], $method['http_method'], $this->returnJson) );
+		return $this->validateResponse( $args, $this->client->request($uri, $data, $method['http_method'], $this->returnJson) );
 	}
 
 	protected function validateResponse($request_args, $response)
@@ -90,6 +91,21 @@ class EtsyApi
 			}
 		}
 		return $response;
+	}
+
+	private function prepareData($data) {
+		$result = array();
+		foreach ($data as $key => $value) {
+			$type = gettype($value);
+			if ($type !== 'boolean') {
+				$result[$key] = $value;
+				continue;
+			}
+
+			$result[$key] = $value ? 1 : 0;
+		}
+
+		return $result;
 	}
 
 	private function prepareParameters($params) {
