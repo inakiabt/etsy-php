@@ -413,4 +413,66 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertCount(1, $result['_invalid']);
 		$this->assertRegExp($this->invalidTypeRegExp, $result['_invalid'][0]);
 	}
+
+	public function testDataValidStringJSONType()
+	{
+		// "uri": "/listings"
+		$method = 'updateInventory';
+		$args = array(
+			'params' => array(
+				'listing_id' => 123456
+			),
+			'data' => array(
+				'price_on_property' => '1,2',
+				'products' => array(
+					'json' => json_encode(array(1, 2, 3))
+				)
+			)
+		);
+
+		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
+		$this->assertEquals($args['data'], $result['_valid']);
+	}
+
+	public function testDataValidEmptyStringJSONType()
+	{
+		// "uri": "/listings"
+		$method = 'updateInventory';
+		$args = array(
+			'params' => array(
+				'listing_id' => 123456
+			),
+			'data' => array(
+				'products' => array(
+					'json' => json_encode(array())
+				)
+			)
+		);
+
+		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
+		$this->assertEquals($args['data'], $result['_valid']);
+	}
+
+	public function testDataInvalidStringJSONType()
+	{
+		// "uri": "/listings"
+		$method = 'updateInventory';
+		$args = array(
+			'params' => array(
+				'listing_id' => 123456
+			),
+			'data' => array(
+				'products' => array(
+					'json' => 'some string'
+				)
+			)
+		);
+
+		$result = RequestValidator::validateParams($args, $this->methods[$method]);
+		$this->assertArrayHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
+		$this->assertCount(1, $result['_invalid']);
+		$this->assertRegExp($this->invalidTypeRegExp, $result['_invalid'][0]);
+	}
 }

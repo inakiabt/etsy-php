@@ -9,6 +9,16 @@
     "visibility": "public",
     "http_method": "GET"
   },
+  "getPublicBaseline": {
+    "name": "getPublicBaseline",
+    "description": "Pings a public v2 uri to get a performance baseline",
+    "uri": "/baseline",
+    "params": null,
+    "defaults": null,
+    "type": null,
+    "visibility": "public",
+    "http_method": "GET"
+  },
   "getCategory": {
     "name": "getCategory",
     "description": "Retrieves a top-level Category by tag.",
@@ -70,6 +80,25 @@
     "visibility": "public",
     "http_method": "GET"
   },
+  "findByIsoCode": {
+    "name": "findByIsoCode",
+    "description": "Get the country info for the given ISO code.",
+    "uri": "/countries/iso/:iso_code",
+    "params": {
+      "limit": "int",
+      "offset": "int",
+      "page": "int",
+      "iso_code": "string"
+    },
+    "defaults": {
+      "limit": 25,
+      "offset": 0,
+      "page": null
+    },
+    "type": "Country",
+    "visibility": "public",
+    "http_method": "GET"
+  },
   "findAllFeaturedTreasuries": {
     "name": "findAllFeaturedTreasuries",
     "description": "Finds all FeaturedTreasuries.",
@@ -112,18 +141,6 @@
     "defaults": null,
     "type": "Listing",
     "visibility": "public",
-    "http_method": "GET"
-  },
-  "findAllListingTransactions": {
-    "name": "findAllListingTransactions",
-    "description": "Finds all listings for a certain FeaturedTreasury.",
-    "uri": "/listings/:listing_id/transactions",
-    "params": {
-      "listing_id": "int"
-    },
-    "defaults": null,
-    "type": "Transaction",
-    "visibility": "private",
     "http_method": "GET"
   },
   "findAllActiveListingsForFeaturedTreasuryId": {
@@ -288,12 +305,16 @@
       "cart_id": "cart_id",
       "destination_country_id": "int",
       "message_to_seller": "string",
-      "coupon_code": "string"
+      "coupon_code": "string",
+      "shipping_option_id": "string",
+      "destination_zip": "string"
     },
     "defaults": {
       "destination_country_id": null,
       "message_to_seller": null,
-      "coupon_code": null
+      "coupon_code": null,
+      "shipping_option_id": null,
+      "destination_zip": null
     },
     "type": "GuestCart",
     "visibility": "public",
@@ -324,6 +345,19 @@
     "visibility": "private",
     "http_method": "POST"
   },
+  "mergeGuest": {
+    "name": "mergeGuest",
+    "description": "Merge this guest to a different guest. Merges the GuestCart's associated with this GuestId into the target guest's cart. Returns the number of listings merged in meta['listings_merged'].",
+    "uri": "/guests/:guest_id/merge",
+    "params": {
+      "guest_id": "guest_id",
+      "target_guest_id": "guest_id"
+    },
+    "defaults": null,
+    "type": "Guest",
+    "visibility": "private",
+    "http_method": "POST"
+  },
   "generateGuest": {
     "name": "generateGuest",
     "description": "A helper method that generates a Guest ID to associate to this anonymous session. This method is not strictly necessary, as any sufficiently random guest ID that is 13 characters in length will suffice and automatically create a guest account on use if it does not yet exist.",
@@ -346,7 +380,7 @@
   },
   "createListing": {
     "name": "createListing",
-    "description": "Creates a new Listing. NOTE: A shipping_template_id is required when creating a listing. <strong>NOTE: All listings created on www.etsy.com must be actual items for sale. Creating active test or otherwise unreal listings may lead to your shop being frozen. Please use the API Sandbox for all test listing creation.</strong>",
+    "description": "Creates a new Listing. NOTE: A shipping_template_id is required when creating a listing. <strong>NOTE: All listings created on www.etsy.com must be actual items for sale. Please see our <a href='/developers/documentation/getting_started/testing'>guidelines for testing</a> with live listings.</strong>",
     "uri": "/listings",
     "params": {
       "quantity": "int",
@@ -357,30 +391,35 @@
       "shipping_template_id": "int",
       "shop_section_id": "int",
       "image_ids": "array(int)",
+      "is_customizable": "boolean",
       "non_taxable": "boolean",
       "image": "image",
       "state": "enum(active, draft)",
       "processing_min": "int",
       "processing_max": "int",
       "category_id": "int",
+      "taxonomy_id": "int",
       "tags": "array(string)",
       "who_made": "enum(i_did, collective, someone_else)",
       "is_supply": "boolean",
-      "when_made": "enum(made_to_order, 2010_2015, 2000_2009, 1994_1999, before_1994, 1990_1993, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
-      "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets)",
-      "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanza, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding)",
+      "when_made": "enum(made_to_order, 2010_2017, 2000_2009, 1998_1999, before_1998, 1990_1997, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
+      "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets, not_specified)",
+      "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanzaa, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding)",
       "style": "array(string)"
     },
     "defaults": {
       "materials": null,
       "shop_section_id": null,
       "image_ids": null,
+      "is_customizable": null,
       "non_taxable": null,
       "image": null,
       "state": "active",
       "shipping_template_id": null,
       "processing_min": null,
       "processing_max": null,
+      "category_id": null,
+      "taxonomy_id": null,
       "tags": null,
       "recipient": null,
       "occasion": null,
@@ -412,37 +451,56 @@
       "title": "string",
       "description": "text",
       "price": "float",
+      "wholesale_price": "float",
       "materials": "array(string)",
       "renew": "boolean",
       "shipping_template_id": "int",
       "shop_section_id": "int",
       "state": "enum(active, inactive, draft)",
       "image_ids": "array(int)",
+      "is_customizable": "boolean",
+      "item_weight": "float",
+      "item_length": "float",
+      "item_width": "float",
+      "item_height": "float",
+      "item_weight_unit": "string",
+      "item_dimensions_unit": "string",
       "non_taxable": "boolean",
       "category_id": "int",
+      "taxonomy_id": "int",
       "tags": "array(string)",
       "who_made": "enum(i_did, collective, someone_else)",
       "is_supply": "boolean",
-      "when_made": "enum(made_to_order, 2010_2015, 2000_2009, 1994_1999, before_1994, 1990_1993, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
-      "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets)",
-      "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanza, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding)",
+      "when_made": "enum(made_to_order, 2010_2017, 2000_2009, 1998_1999, before_1998, 1990_1997, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
+      "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets, not_specified)",
+      "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanzaa, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding)",
       "style": "array(string)",
       "processing_min": "int",
-      "processing_max": "int"
+      "processing_max": "int",
+      "featured_rank": "featured_rank"
     },
     "defaults": {
       "quantity": null,
       "title": null,
       "description": null,
       "price": null,
+      "wholesale_price": null,
       "materials": null,
       "renew": null,
       "shipping_template_id": null,
       "shop_section_id": null,
       "state": "active",
       "image_ids": null,
+      "is_customizable": null,
+      "item_weight": null,
+      "item_length": null,
+      "item_width": null,
+      "item_height": null,
+      "item_weight_unit": null,
+      "item_dimensions_unit": null,
       "non_taxable": null,
       "category_id": null,
+      "taxonomy_id": null,
       "tags": null,
       "who_made": null,
       "is_supply": null,
@@ -451,7 +509,8 @@
       "occasion": null,
       "style": null,
       "processing_min": null,
-      "processing_max": null
+      "processing_max": null,
+      "featured_rank": null
     },
     "type": "Listing",
     "visibility": "private",
@@ -466,6 +525,64 @@
     },
     "defaults": null,
     "type": "Listing",
+    "visibility": "private",
+    "http_method": "DELETE"
+  },
+  "getAttributes": {
+    "name": "getAttributes",
+    "description": "Get all of the attributes for a listing [developer preview - may be unstable]",
+    "uri": "/listings/:listing_id/attributes",
+    "params": {
+      "listing_id": "int"
+    },
+    "defaults": null,
+    "type": "PropertyValue",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "getAttribute": {
+    "name": "getAttribute",
+    "description": "Get an attribute for a listing [developer preview - may be unstable]",
+    "uri": "/listings/:listing_id/attributes/:property_id",
+    "params": {
+      "listing_id": "int",
+      "property_id": "int"
+    },
+    "defaults": null,
+    "type": "PropertyValue",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "updateAttribute": {
+    "name": "updateAttribute",
+    "description": "Update or populate an attribute for a listing [developer preview - may be unstable]",
+    "uri": "/listings/:listing_id/attributes/:property_id",
+    "params": {
+      "listing_id": "int",
+      "property_id": "int",
+      "value_ids": "array(int)",
+      "values": "array(string)",
+      "scale_id": "int"
+    },
+    "defaults": {
+      "value_ids": null,
+      "values": null,
+      "scale_id": null
+    },
+    "type": "PropertyValue",
+    "visibility": "private",
+    "http_method": "PUT"
+  },
+  "deleteAttribute": {
+    "name": "deleteAttribute",
+    "description": "Delete an attribute for a listing [developer preview - may be unstable]",
+    "uri": "/listings/:listing_id/attributes/:property_id",
+    "params": {
+      "listing_id": "int",
+      "property_id": "int"
+    },
+    "defaults": null,
+    "type": "PropertyValue",
     "visibility": "private",
     "http_method": "DELETE"
   },
@@ -547,6 +664,18 @@
     "visibility": "private",
     "http_method": "DELETE"
   },
+  "findAllListingFundOnEtsyCampaign": {
+    "name": "findAllListingFundOnEtsyCampaign",
+    "description": "Retrieves a set of FundOnEtsyCampaign objects associated to a Listing.",
+    "uri": "/listings/:listing_id/fundonetsycampaign",
+    "params": {
+      "listing_id": "int"
+    },
+    "defaults": null,
+    "type": "FundOnEtsyCampaign",
+    "visibility": "public",
+    "http_method": "GET"
+  },
   "findAllListingImages": {
     "name": "findAllListingImages",
     "description": "Retrieves a set of ListingImage objects associated to a Listing.",
@@ -561,20 +690,22 @@
   },
   "uploadListingImage": {
     "name": "uploadListingImage",
-    "description": "Upload a new listing image, or re-associate a previously deleted one. You may associate an image\n                                      to any listing within the same shop that the image's original listing belongs to.\n                                      You MUST pass either a listing_image_id OR an image to this method.\n                                      Passing a listing_image_id serves to re-associate an image that was previously deleted.\n                                      If you wish to re-associate an image, we strongly recommend using the listing_image_id\n                                      argument as opposed to re-uploading a new image each time, to save bandwidth for you as well as us.\n                                      Pass overwrite=1 to replace the existing image at a given rank.",
+    "description": "Upload a new listing image, or re-associate a previously deleted one. You may associate an image\n                                      to any listing within the same shop that the image's original listing belongs to.\n                                      You MUST pass either a listing_image_id OR an image to this method.\n                                      Passing a listing_image_id serves to re-associate an image that was previously deleted.\n                                      If you wish to re-associate an image, we strongly recommend using the listing_image_id\n                                      argument as opposed to re-uploading a new image each time, to save bandwidth for you as well as us.\n                                      Pass overwrite=1 to replace the existing image at a given rank.\n                                      When uploading a new listing image with a watermark, pass is_watermarked=1; existing listing images\n                                      will not be affected by this parameter.",
     "uri": "/listings/:listing_id/images",
     "params": {
       "listing_id": "int",
       "listing_image_id": "int",
       "image": "imagefile",
       "rank": "int",
-      "overwrite": "boolean"
+      "overwrite": "boolean",
+      "is_watermarked": "boolean"
     },
     "defaults": {
       "listing_image_id": null,
       "image": null,
       "rank": 1,
-      "overwrite": 0
+      "overwrite": 0,
+      "is_watermarked": 0
     },
     "type": "ListingImage",
     "visibility": "private",
@@ -606,21 +737,74 @@
     "visibility": "private",
     "http_method": "DELETE"
   },
-  "findAllListingShippingProfileEntries": {
-    "name": "findAllListingShippingProfileEntries",
-    "description": "Retrieves a set of ShippingInfo objects associated to a Listing.",
-    "uri": "/listings/:listing_id/shipping/info",
+  "getInventory": {
+    "name": "getInventory",
+    "description": "Get the inventory for a listing [developer preview - may be unstable]",
+    "uri": "/listings/:listing_id/inventory",
     "params": {
       "listing_id": "int",
-      "limit": "int",
-      "offset": "int",
-      "page": "int"
+      "write_missing_inventory": "boolean"
     },
     "defaults": {
-      "limit": 25,
-      "offset": 0,
-      "page": null
+      "write_missing_inventory": false
     },
+    "type": "ListingInventory",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "updateInventory": {
+    "name": "updateInventory",
+    "description": "Update the inventory for a listing [developer preview - may be unstable]",
+    "uri": "/listings/:listing_id/inventory",
+    "params": {
+      "listing_id": "int",
+      "products": "stringJSON",
+      "price_on_property": "string",
+      "quantity_on_property": "string",
+      "sku_on_property": "string"
+    },
+    "defaults": {
+      "price_on_property": null,
+      "quantity_on_property": null,
+      "sku_on_property": null
+    },
+    "type": "ListingInventory",
+    "visibility": "private",
+    "http_method": "PUT"
+  },
+  "getProduct": {
+    "name": "getProduct",
+    "description": "Get a specific offering for a listing [developer preview - may be unstable]",
+    "uri": "/listings/:listing_id/products/:product_id",
+    "params": {
+      "listing_id": "int",
+      "product_id": "int"
+    },
+    "defaults": null,
+    "type": "ListingOffering",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "getOffering": {
+    "name": "getOffering",
+    "description": "Get a specific offering for a listing [developer preview - may be unstable]",
+    "uri": "/listings/:listing_id/products/:product_id/offerings/:offering_id",
+    "params": {
+      "listing_id": "int",
+      "product_id": "int",
+      "offering_id": "int"
+    },
+    "defaults": null,
+    "type": "ListingOffering",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "findAllListingShippingProfileEntries": {
+    "name": "findAllListingShippingProfileEntries",
+    "description": "Retrieves a set of ShippingProfileEntries objects associated to a Listing.",
+    "uri": "/listings/:listing_id/shipping/info",
+    "params": null,
+    "defaults": null,
     "type": "ShippingInfo",
     "visibility": "public",
     "http_method": "GET"
@@ -630,7 +814,6 @@
     "description": "Creates a new ShippingInfo.",
     "uri": "/listings/:listing_id/shipping/info",
     "params": {
-      "origin_country_id": "int",
       "destination_country_id": "int",
       "primary_cost": "float",
       "secondary_cost": "float",
@@ -644,6 +827,83 @@
     "type": "ShippingInfo",
     "visibility": "private",
     "http_method": "POST"
+  },
+  "getListingShippingUpgrades": {
+    "name": "getListingShippingUpgrades",
+    "description": "Get the shipping upgrades available for a listing.",
+    "uri": "/listings/:listing_id/shipping/upgrades",
+    "params": {
+      "listing_id": "int"
+    },
+    "defaults": null,
+    "type": "ShippingUpgrade",
+    "visibility": "private",
+    "http_method": "GET"
+  },
+  "createListingShippingUpgrade": {
+    "name": "createListingShippingUpgrade",
+    "description": "Creates a new ShippingUpgrade for the listing. Will unlink the listing if linked to a ShippingTemplate.",
+    "uri": "/listings/:listing_id/shipping/upgrades",
+    "params": {
+      "listing_id": "int",
+      "type": "int",
+      "value": "string",
+      "price": "float",
+      "secondary_price": "float"
+    },
+    "defaults": null,
+    "type": "ShippingUpgrade",
+    "visibility": "private",
+    "http_method": "POST"
+  },
+  "updateListingShippingUpgrade": {
+    "name": "updateListingShippingUpgrade",
+    "description": "Updates a ShippingUpgrade on a listing. Will unlink the listing if linked to a ShippingTemplate.",
+    "uri": "/listings/:listing_id/shipping/upgrades",
+    "params": {
+      "listing_id": "int",
+      "value_id": "int",
+      "type": "int",
+      "price": "float",
+      "secondary_price": "float"
+    },
+    "defaults": null,
+    "type": "ShippingUpgrade",
+    "visibility": "private",
+    "http_method": "PUT"
+  },
+  "deleteListingShippingUpgrade": {
+    "name": "deleteListingShippingUpgrade",
+    "description": "Deletes the ShippingUpgrade from the listing. Will unlink the listing if linked to a ShippingTemplate.",
+    "uri": "/listings/:listing_id/shipping/upgrades",
+    "params": {
+      "listing_id": "int",
+      "value_id": "int",
+      "type": "int"
+    },
+    "defaults": null,
+    "type": "ShippingUpgrade",
+    "visibility": "private",
+    "http_method": "DELETE"
+  },
+  "findAllListingTransactions": {
+    "name": "findAllListingTransactions",
+    "description": "Retrieves a set of Transaction objects associated to a Listing.",
+    "uri": "/listings/:listing_id/transactions",
+    "params": {
+      "listing_id": "int",
+      "limit": "int",
+      "offset": "int",
+      "page": "int"
+    },
+    "defaults": {
+      "limit": 25,
+      "offset": 0,
+      "page": null
+    },
+    "type": "Transaction",
+    "visibility": "private",
+    "http_method": "GET"
   },
   "getListingTranslation": {
     "name": "getListingTranslation",
@@ -664,9 +924,16 @@
     "uri": "/listings/:listing_id/translations/:language",
     "params": {
       "listing_id": "int",
-      "language": "language"
+      "language": "language",
+      "title": "string",
+      "description": "text",
+      "tags": "array(string)"
     },
-    "defaults": null,
+    "defaults": {
+      "title": false,
+      "description": false,
+      "tags": false
+    },
     "type": "ListingTranslation",
     "visibility": "private",
     "http_method": "POST"
@@ -677,9 +944,16 @@
     "uri": "/listings/:listing_id/translations/:language",
     "params": {
       "listing_id": "int",
-      "language": "language"
+      "language": "language",
+      "title": "string",
+      "description": "text",
+      "tags": "array(string)"
     },
-    "defaults": null,
+    "defaults": {
+      "title": false,
+      "description": false,
+      "tags": false
+    },
     "type": "ListingTranslation",
     "visibility": "private",
     "http_method": "PUT"
@@ -706,7 +980,7 @@
     },
     "defaults": null,
     "type": "Variations_Property",
-    "visibility": "private",
+    "visibility": "public",
     "http_method": "GET"
   },
   "createListingVariations": {
@@ -741,6 +1015,38 @@
     "visibility": "private",
     "http_method": "POST"
   },
+  "updateListingVariations": {
+    "name": "updateListingVariations",
+    "description": "Update all of the listing variations available for a listing. Expects a JSON array with a collection of objects of the form: <code>[{\"property_id\":200, \"value\":\"Black\"}, {\"property_id\":200, \"value\":\"White\"}]</code>",
+    "uri": "/listings/:listing_id/variations",
+    "params": {
+      "listing_id": "int",
+      "variations": "array(listing_variation)",
+      "custom_property_names": "map(int, string)",
+      "recipient_id": "int",
+      "sizing_scale": "int",
+      "weight_scale": "int",
+      "height_scale": "int",
+      "length_scale": "int",
+      "width_scale": "int",
+      "diameter_scale": "int",
+      "dimensions_scale": "int"
+    },
+    "defaults": {
+      "custom_property_names": null,
+      "recipient_id": null,
+      "sizing_scale": null,
+      "weight_scale": null,
+      "height_scale": null,
+      "length_scale": null,
+      "width_scale": null,
+      "diameter_scale": null,
+      "dimensions_scale": null
+    },
+    "type": "Variations_Property",
+    "visibility": "private",
+    "http_method": "PUT"
+  },
   "createListingVariation": {
     "name": "createListingVariation",
     "description": "Add a new listing variation for a listing.",
@@ -750,7 +1056,7 @@
       "property_id": "int",
       "value": "string",
       "is_available": "boolean",
-      "price": "int"
+      "price": "float"
     },
     "defaults": {
       "is_available": true,
@@ -769,7 +1075,7 @@
       "property_id": "int",
       "value": "string",
       "is_available": "boolean",
-      "price": "int"
+      "price": "float"
     },
     "defaults": {
       "price": null
@@ -812,6 +1118,7 @@
       "location": "string",
       "lat": "latitude",
       "lon": "longitude",
+      "region": "region",
       "geo_level": "enum(city, state, country)",
       "accepts_gift_cards": "boolean",
       "translate_keywords": "boolean"
@@ -832,6 +1139,7 @@
       "location": null,
       "lat": null,
       "lon": null,
+      "region": null,
       "geo_level": "city",
       "accepts_gift_cards": "false",
       "translate_keywords": "false"
@@ -840,24 +1148,11 @@
     "visibility": "public",
     "http_method": "GET"
   },
-  "getOrder": {
-    "name": "getOrder",
-    "description": "Retrieves a Order by id.",
-    "uri": "/orders/:order_id",
+  "getInterestingListings": {
+    "name": "getInterestingListings",
+    "description": "Collects the list of interesting listings",
+    "uri": "/listings/interesting",
     "params": {
-      "order_id": "array(int)"
-    },
-    "defaults": null,
-    "type": "Order",
-    "visibility": "private",
-    "http_method": "GET"
-  },
-  "findAllOrderReceipts": {
-    "name": "findAllOrderReceipts",
-    "description": "Retrieves a set of Receipt objects associated to a Order.",
-    "uri": "/orders/:order_id/receipts",
-    "params": {
-      "order_id": "int",
       "limit": "int",
       "offset": "int",
       "page": "int"
@@ -867,8 +1162,270 @@
       "offset": 0,
       "page": null
     },
-    "type": "Receipt",
+    "type": "Listing",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "getTrendingListings": {
+    "name": "getTrendingListings",
+    "description": "Collects the list of listings used to generate the trending listing page",
+    "uri": "/listings/trending",
+    "params": {
+      "limit": "int",
+      "offset": "int",
+      "page": "int"
+    },
+    "defaults": {
+      "limit": 25,
+      "offset": 0,
+      "page": null
+    },
+    "type": "Listing",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "pagesSignup": {
+    "name": "pagesSignup",
+    "description": "Sign up for Pages",
+    "uri": "/pages-signup",
+    "params": {
+      "brand_name": "string",
+      "brand_url": "string",
+      "name": "string",
+      "title": "string",
+      "email": "string"
+    },
+    "defaults": null,
+    "type": null,
+    "visibility": "public",
+    "http_method": "POST"
+  },
+  "findPage": {
+    "name": "findPage",
+    "description": "Find a single page.",
+    "uri": "/pages/:page_id",
+    "params": {
+      "page_id": "int"
+    },
+    "defaults": null,
+    "type": "Page",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "updatePageData": {
+    "name": "updatePageData",
+    "description": "Update a Page's data.",
+    "uri": "/pages/:page_id",
+    "params": {
+      "page_id": "int",
+      "page_name": "string",
+      "link": "string",
+      "byline": "string",
+      "avatar": "image"
+    },
+    "defaults": {
+      "page_name": null,
+      "link": null,
+      "byline": null,
+      "avatar": null
+    },
+    "type": "Array",
+    "visibility": "public",
+    "http_method": "POST"
+  },
+  "uploadAvatar": {
+    "name": "uploadAvatar",
+    "description": "Upload a new user avatar image",
+    "uri": "/users/:user_id/avatar",
+    "params": {
+      "src": "string",
+      "user_id": "user_id_or_name",
+      "image": "image"
+    },
+    "defaults": {
+      "src": null,
+      "image": null
+    },
+    "type": "Avatar",
     "visibility": "private",
+    "http_method": "POST"
+  },
+  "findAllPageCollections": {
+    "name": "findAllPageCollections",
+    "description": "See all of a page's public collections.",
+    "uri": "/pages/:page_id/collections",
+    "params": {
+      "limit": "int",
+      "offset": "int",
+      "page": "int",
+      "page_id": "int"
+    },
+    "defaults": {
+      "limit": 25,
+      "offset": 0,
+      "page": null
+    },
+    "type": "Collection",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "createPageCollection": {
+    "name": "createPageCollection",
+    "description": "Create a page collection for the given page.",
+    "uri": "/pages/:page_id/collections",
+    "params": {
+      "page_id": "int",
+      "name": "string",
+      "privacy_level": "string"
+    },
+    "defaults": {
+      "privacy_level": "public"
+    },
+    "type": "Collection",
+    "visibility": "private",
+    "http_method": "POST"
+  },
+  "getPageCollection": {
+    "name": "getPageCollection",
+    "description": "Retrieve a single page collection.",
+    "uri": "/pages/:page_id/collections/:collection_id",
+    "params": {
+      "page_id": "int",
+      "collection_id": "int"
+    },
+    "defaults": null,
+    "type": "Collection",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "updatePageCollection": {
+    "name": "updatePageCollection",
+    "description": "Update a page collection.",
+    "uri": "/pages/:page_id/collections/:collection_id",
+    "params": {
+      "page_id": "int",
+      "collection_id": "int",
+      "name": "string",
+      "privacy_level": "string"
+    },
+    "defaults": {
+      "name": null,
+      "privacy_level": "public"
+    },
+    "type": "Collection",
+    "visibility": "private",
+    "http_method": "PUT"
+  },
+  "deletePageCollection": {
+    "name": "deletePageCollection",
+    "description": "Delete a page collection.",
+    "uri": "/pages/:page_id/collections/:collection_id",
+    "params": {
+      "page_id": "int",
+      "collection_id": "int"
+    },
+    "defaults": null,
+    "type": "Collection",
+    "visibility": "private",
+    "http_method": "DELETE"
+  },
+  "getCollectionListings": {
+    "name": "getCollectionListings",
+    "description": "Retrieve the listings for a single page collection.",
+    "uri": "/pages/:page_id/collections/:collection_id/listings",
+    "params": {
+      "limit": "int",
+      "offset": "int",
+      "page": "int",
+      "page_id": "int",
+      "collection_id": "int"
+    },
+    "defaults": {
+      "limit": 25,
+      "offset": 0,
+      "page": null
+    },
+    "type": "CollectionListing",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "addListingToCollection": {
+    "name": "addListingToCollection",
+    "description": "Add a listing to a page collection",
+    "uri": "/pages/:page_id/collections/:collection_id/listings/:listing_id",
+    "params": {
+      "page_id": "int",
+      "collection_id": "int",
+      "listing_id": "int"
+    },
+    "defaults": null,
+    "type": "CollectionListing",
+    "visibility": "private",
+    "http_method": "POST"
+  },
+  "removeListingFromCollection": {
+    "name": "removeListingFromCollection",
+    "description": "Remove a listing from a collection",
+    "uri": "/pages/:page_id/collections/:collection_id/listings/:listing_id",
+    "params": {
+      "page_id": "int",
+      "collection_id": "int",
+      "listing_id": "int"
+    },
+    "defaults": null,
+    "type": "CollectionListing",
+    "visibility": "private",
+    "http_method": "DELETE"
+  },
+  "findPageCollectionsForListings": {
+    "name": "findPageCollectionsForListings",
+    "description": "Find the collection ids for the authorized page and listing ids",
+    "uri": "/pages/:page_id/collections/listings_map",
+    "params": {
+      "page_id": "int",
+      "listing_ids": "array(int)"
+    },
+    "defaults": null,
+    "type": "array",
+    "visibility": "private",
+    "http_method": "GET"
+  },
+  "addCurator": {
+    "name": "addCurator",
+    "description": "Add a user as curator for a page.",
+    "uri": "/pages/:page_id/curators/:curator_id",
+    "params": {
+      "page_id": "int",
+      "curator_id": "int"
+    },
+    "defaults": null,
+    "type": "Array",
+    "visibility": "public",
+    "http_method": "POST"
+  },
+  "removeCurator": {
+    "name": "removeCurator",
+    "description": "Remove a user from curating page.",
+    "uri": "/pages/:page_id/curators/:curator_id",
+    "params": {
+      "page_id": "int",
+      "curator_id": "int"
+    },
+    "defaults": null,
+    "type": "Array",
+    "visibility": "public",
+    "http_method": "DELETE"
+  },
+  "curatorPeopleSearch": {
+    "name": "curatorPeopleSearch",
+    "description": "Search for people to add as curators.",
+    "uri": "/pages/find-curators",
+    "params": {
+      "query": "string"
+    },
+    "defaults": null,
+    "type": "Array",
+    "visibility": "public",
     "http_method": "GET"
   },
   "findPayment": {
@@ -929,94 +1486,15 @@
     "visibility": "private",
     "http_method": "GET"
   },
-  "createPaymentTemplate": {
-    "name": "createPaymentTemplate",
-    "description": "Creates a new PaymentTemplate.",
-    "uri": "/payments/templates",
-    "params": {
-      "allow_check": "boolean",
-      "allow_mo": "boolean",
-      "allow_other": "boolean",
-      "allow_paypal": "boolean",
-      "allow_cc": "boolean",
-      "paypal_email": "string",
-      "name": "string",
-      "first_line": "string",
-      "second_line": "string",
-      "city": "string",
-      "state": "string",
-      "zip": "string",
-      "country_id": "int"
-    },
-    "defaults": {
-      "allow_check": null,
-      "allow_mo": null,
-      "allow_other": null,
-      "allow_paypal": null,
-      "allow_cc": null,
-      "paypal_email": null,
-      "name": null,
-      "first_line": null,
-      "second_line": null,
-      "city": null,
-      "state": null,
-      "zip": null,
-      "country_id": null
-    },
-    "type": "PaymentTemplate",
-    "visibility": "private",
-    "http_method": "POST"
-  },
-  "getPaymentTemplate": {
-    "name": "getPaymentTemplate",
-    "description": "Retrieves a PaymentTemplate by id.",
-    "uri": "/payments/templates/:payment_template_id",
-    "params": {
-      "payment_template_id": "array(int)"
-    },
+  "getPrivateBaseline": {
+    "name": "getPrivateBaseline",
+    "description": "Pings a private v2 uri to get a performance baseline",
+    "uri": "/private-baseline",
+    "params": null,
     "defaults": null,
-    "type": "PaymentTemplate",
-    "visibility": "private",
+    "type": null,
+    "visibility": "public",
     "http_method": "GET"
-  },
-  "updatePaymentTemplate": {
-    "name": "updatePaymentTemplate",
-    "description": "Updates a PaymentTemplate.",
-    "uri": "/payments/templates/:payment_template_id",
-    "params": {
-      "allow_check": "boolean",
-      "allow_mo": "boolean",
-      "allow_other": "boolean",
-      "allow_paypal": "boolean",
-      "allow_cc": "boolean",
-      "paypal_email": "string",
-      "name": "string",
-      "first_line": "string",
-      "second_line": "string",
-      "city": "string",
-      "state": "string",
-      "zip": "string",
-      "country_id": "int",
-      "payment_template_id": "int"
-    },
-    "defaults": {
-      "allow_check": null,
-      "allow_mo": null,
-      "allow_other": null,
-      "allow_paypal": null,
-      "allow_cc": null,
-      "paypal_email": null,
-      "name": null,
-      "first_line": null,
-      "second_line": null,
-      "city": null,
-      "state": null,
-      "zip": null,
-      "country_id": null
-    },
-    "type": "PaymentTemplate",
-    "visibility": "private",
-    "http_method": "PUT"
   },
   "getPropertyOptionModifier": {
     "name": "getPropertyOptionModifier",
@@ -1085,30 +1563,22 @@
     "description": "Find the property set for the category id",
     "uri": "/property_sets",
     "params": {
-      "category_id": "int"
+      "category_id": "int",
+      "taxonomy_id": "int",
+      "recipient_id": "int"
     },
     "defaults": {
-      "category_id": null
+      "category_id": null,
+      "taxonomy_id": null,
+      "recipient_id": null
     },
     "type": "Variations_PropertySet",
     "visibility": "public",
     "http_method": "GET"
   },
-  "createReceiptOnSandbox": {
-    "name": "createReceiptOnSandbox",
-    "description": "Creates a purchase for the current OAuth user, including Order, Receipt and Transaction resources. This method is only available via the Sandbox API. Listing IDs must be active, and belong to the same seller user ID. The buyer must have at least one UserAddress record, or an error will be thrown.",
-    "uri": "/receipts",
-    "params": {
-      "listing_id": "array(int)"
-    },
-    "defaults": null,
-    "type": "Receipt",
-    "visibility": "private",
-    "http_method": "POST"
-  },
-  "getReceipt": {
-    "name": "getReceipt",
-    "description": "Retrieves a Receipt by id.",
+  "getShop_Receipt2": {
+    "name": "getShop_Receipt2",
+    "description": "Retrieves a Shop_Receipt2 by id.",
     "uri": "/receipts/:receipt_id",
     "params": {
       "receipt_id": "array(int)"
@@ -1120,20 +1590,16 @@
   },
   "updateReceipt": {
     "name": "updateReceipt",
-    "description": "Updates a Receipt",
+    "description": "Updates a Shop_Receipt2",
     "uri": "/receipts/:receipt_id",
     "params": {
       "receipt_id": "int",
       "was_paid": "boolean",
-      "was_shipped": "boolean",
-      "message_from_seller": "string",
-      "message_from_buyer": "string"
+      "was_shipped": "boolean"
     },
     "defaults": {
       "was_paid": null,
-      "was_shipped": null,
-      "message_from_seller": null,
-      "message_from_buyer": null
+      "was_shipped": null
     },
     "type": "Receipt",
     "visibility": "private",
@@ -1158,9 +1624,9 @@
     "visibility": "private",
     "http_method": "GET"
   },
-  "findAllReceiptTransactions": {
-    "name": "findAllReceiptTransactions",
-    "description": "Retrieves a set of Transaction objects associated to a Receipt.",
+  "findAllShop_Receipt2Transactions": {
+    "name": "findAllShop_Receipt2Transactions",
+    "description": "Retrieves a set of Transaction objects associated to a Shop_Receipt2.",
     "uri": "/receipts/:receipt_id/transactions",
     "params": {
       "receipt_id": "int",
@@ -1199,6 +1665,16 @@
     "visibility": "public",
     "http_method": "GET"
   },
+  "findEligibleRegions": {
+    "name": "findEligibleRegions",
+    "description": "",
+    "uri": "/regions/eligible",
+    "params": null,
+    "defaults": null,
+    "type": "Region",
+    "visibility": "public",
+    "http_method": "GET"
+  },
   "findBrowseSegments": {
     "name": "findBrowseSegments",
     "description": "Find all Browse Segments",
@@ -1217,7 +1693,7 @@
   },
   "findBrowseSegmentListings": {
     "name": "findBrowseSegmentListings",
-    "description": "Find Listings for a Segment by Segment path",
+    "description": "Find Listings for a Segment by Segment path. NOTE: Offset must be an integer multiple of limit.",
     "uri": "/segments/listings",
     "params": {
       "path": "string",
@@ -1229,6 +1705,7 @@
       "sort_order": "enum(up, down)",
       "min_price": "float",
       "max_price": "float",
+      "ship_to": "string",
       "location": "string",
       "lat": "latitude",
       "lon": "longitude",
@@ -1244,6 +1721,7 @@
       "sort_order": "down",
       "min_price": null,
       "max_price": null,
+      "ship_to": null,
       "location": null,
       "lat": null,
       "lon": null,
@@ -1288,6 +1766,49 @@
     "visibility": "public",
     "http_method": "GET"
   },
+  "getShippingCosts": {
+    "name": "getShippingCosts",
+    "description": "Returns postage costs for the shipping carrier based on the supplied package",
+    "uri": "/shipping/:shipping_provider_id/postage-costs",
+    "params": {
+      "origin_postal_code": "string",
+      "origin_country_id": "int",
+      "origin_state": "string",
+      "destination_postal_code": "string",
+      "destination_country_id": "int",
+      "destination_state": "string",
+      "shipping_provider_id": "shipping_provider_id",
+      "mail_class": "string",
+      "ships_on_date": "int",
+      "weight": "float",
+      "weight_units": "string",
+      "length": "float",
+      "width": "float",
+      "height": "float",
+      "dimension_units": "string",
+      "signature_confirmation": "boolean",
+      "insurance_value": "int",
+      "saturday_delivery": "boolean",
+      "signature_confirmation_type": "string"
+    },
+    "defaults": {
+      "origin_state": null,
+      "destination_state": null,
+      "ships_on_date": 0,
+      "weight_units": "oz",
+      "length": null,
+      "width": null,
+      "height": null,
+      "dimension_units": "in",
+      "signature_confirmation": null,
+      "insurance_value": 0,
+      "saturday_delivery": false,
+      "signature_confirmation_type": null
+    },
+    "type": "Array",
+    "visibility": "private",
+    "http_method": "POST"
+  },
   "getShippingInfo": {
     "name": "getShippingInfo",
     "description": "Retrieves a ShippingInfo by id.",
@@ -1306,7 +1827,6 @@
     "uri": "/shipping/info/:shipping_info_id",
     "params": {
       "shipping_info_id": "int",
-      "origin_country_id": "int",
       "destination_country_id": "int",
       "primary_cost": "float",
       "secondary_cost": "float",
@@ -1314,7 +1834,6 @@
       "listing_id": "int"
     },
     "defaults": {
-      "origin_country_id": null,
       "destination_country_id": null,
       "primary_cost": null,
       "secondary_cost": null,
@@ -1333,9 +1852,44 @@
       "shipping_info_id": "int"
     },
     "defaults": null,
-    "type": "ShippingProfileEntry",
+    "type": "ShippingInfo",
     "visibility": "private",
     "http_method": "DELETE"
+  },
+  "getPostageRates": {
+    "name": "getPostageRates",
+    "description": "Returns postage costs for all mail classes for a shipping carrier based on the supplied package",
+    "uri": "/shipping/providers/:shipping_provider_id/mail-class-rates",
+    "params": {
+      "origin_postal_code": "string",
+      "origin_country_id": "int",
+      "destination_postal_code": "string",
+      "destination_country_id": "int",
+      "destination_state": "string",
+      "shipping_provider_id": "int",
+      "ships_on_date": "int",
+      "package_type": "string",
+      "weight": "float",
+      "weight_units": "string",
+      "length": "float",
+      "width": "float",
+      "height": "float",
+      "dimension_units": "string"
+    },
+    "defaults": {
+      "destination_postal_code": null,
+      "destination_state": null,
+      "ships_on_date": 0,
+      "package_type": "parcel",
+      "weight_units": "oz",
+      "length": null,
+      "width": null,
+      "height": null,
+      "dimension_units": "in"
+    },
+    "type": "Array",
+    "visibility": "public",
+    "http_method": "POST"
   },
   "createShippingTemplate": {
     "name": "createShippingTemplate",
@@ -1347,11 +1901,15 @@
       "destination_country_id": "int",
       "primary_cost": "float",
       "secondary_cost": "float",
-      "destination_region_id": "int"
+      "destination_region_id": "int",
+      "min_processing_days": "int",
+      "max_processing_days": "int"
     },
     "defaults": {
       "destination_country_id": null,
-      "destination_region_id": null
+      "destination_region_id": null,
+      "min_processing_days": null,
+      "max_processing_days": null
     },
     "type": "ShippingTemplate",
     "visibility": "private",
@@ -1376,11 +1934,15 @@
     "params": {
       "shipping_template_id": "int",
       "title": "string",
-      "origin_country_id": "int"
+      "origin_country_id": "int",
+      "min_processing_days": "int",
+      "max_processing_days": "int"
     },
     "defaults": {
       "title": null,
-      "origin_country_id": null
+      "origin_country_id": null,
+      "min_processing_days": null,
+      "max_processing_days": null
     },
     "type": "ShippingTemplate",
     "visibility": "private",
@@ -1416,6 +1978,64 @@
     "type": "ShippingTemplate",
     "visibility": "private",
     "http_method": "GET"
+  },
+  "findAllShippingTemplateUpgrades": {
+    "name": "findAllShippingTemplateUpgrades",
+    "description": "Retrieves a list of shipping upgrades for the parent ShippingTemplate",
+    "uri": "/shipping/templates/:shipping_template_id/upgrades",
+    "params": {
+      "shipping_template_id": "int"
+    },
+    "defaults": null,
+    "type": "ShippingUpgrade",
+    "visibility": "private",
+    "http_method": "GET"
+  },
+  "createShippingTemplateUpgrade": {
+    "name": "createShippingTemplateUpgrade",
+    "description": "Creates a new ShippingUpgrade for the parent ShippingTemplate. Updates any listings linked to the ShippingTemplate.",
+    "uri": "/shipping/templates/:shipping_template_id/upgrades",
+    "params": {
+      "shipping_template_id": "int",
+      "type": "int",
+      "value": "string",
+      "price": "float",
+      "secondary_price": "float"
+    },
+    "defaults": null,
+    "type": "ShippingUpgrade",
+    "visibility": "private",
+    "http_method": "POST"
+  },
+  "updateShippingTemplateUpgrade": {
+    "name": "updateShippingTemplateUpgrade",
+    "description": "Updates a ShippingUpgrade of the parent ShippingTemplate. Updates any listings linked to the ShippingTemplate.",
+    "uri": "/shipping/templates/:shipping_template_id/upgrades",
+    "params": {
+      "shipping_template_id": "int",
+      "value_id": "int",
+      "type": "int",
+      "price": "float",
+      "secondary_price": "float"
+    },
+    "defaults": null,
+    "type": "ShippingUpgrade",
+    "visibility": "private",
+    "http_method": "PUT"
+  },
+  "deleteShippingTemplateUpgrade": {
+    "name": "deleteShippingTemplateUpgrade",
+    "description": "Deletes the ShippingUpgrade from the parent ShippingTemplate. Updates any listings linked to the ShippingTemplate.",
+    "uri": "/shipping/templates/:shipping_template_id/upgrades",
+    "params": {
+      "shipping_template_id": "int",
+      "value_id": "int",
+      "type": "int"
+    },
+    "defaults": null,
+    "type": "ShippingUpgrade",
+    "visibility": "private",
+    "http_method": "DELETE"
   },
   "createShippingTemplateEntry": {
     "name": "createShippingTemplateEntry",
@@ -1484,7 +2104,7 @@
     "description": "Finds all Shops.  If there is a keywords parameter, finds shops with shop_name starting with keywords.",
     "uri": "/shops",
     "params": {
-      "shop_name": "string (length >= 3)",
+      "shop_name": "string",
       "limit": "int",
       "offset": "int",
       "page": "int",
@@ -1531,7 +2151,8 @@
       "policy_shipping": "text",
       "policy_refunds": "text",
       "policy_additional": "text",
-      "policy_seller_info": "text"
+      "policy_seller_info": "text",
+      "digital_sale_message": "text"
     },
     "defaults": {
       "title": null,
@@ -1542,7 +2163,8 @@
       "policy_shipping": null,
       "policy_refunds": null,
       "policy_additional": null,
-      "policy_seller_info": null
+      "policy_seller_info": null,
+      "digital_sale_message": null
     },
     "type": "Shop",
     "visibility": "private",
@@ -1701,6 +2323,45 @@
       "page": null
     },
     "type": "LedgerEntry",
+    "visibility": "private",
+    "http_method": "GET"
+  },
+  "findLedgerEntry": {
+    "name": "findLedgerEntry",
+    "description": "Get a Shop Payment Account Ledger Entry",
+    "uri": "/shops/:shop_id/ledger/entries/:ledger_entry_id",
+    "params": {
+      "shop_id": "shop_id_or_name",
+      "ledger_entry_id": "int"
+    },
+    "defaults": null,
+    "type": "LedgerEntry",
+    "visibility": "private",
+    "http_method": "GET"
+  },
+  "findPaymentAdjustmentForLedgerEntry": {
+    "name": "findPaymentAdjustmentForLedgerEntry",
+    "description": "Get a Payment Adjustment from a Ledger Entry ID, if applicable",
+    "uri": "/shops/:shop_id/ledger/entries/:ledger_entry_id/adjustment",
+    "params": {
+      "shop_id": "shop_id_or_name",
+      "ledger_entry_id": "array(int)"
+    },
+    "defaults": null,
+    "type": "PaymentAdjustment",
+    "visibility": "private",
+    "http_method": "GET"
+  },
+  "findPaymentForLedgerEntry": {
+    "name": "findPaymentForLedgerEntry",
+    "description": "Get a Payment from a Ledger Entry ID, if applicable",
+    "uri": "/shops/:shop_id/ledger/entries/:ledger_entry_id/payment",
+    "params": {
+      "shop_id": "shop_id_or_name",
+      "ledger_entry_id": "array(int)"
+    },
+    "defaults": null,
+    "type": "Payment",
     "visibility": "private",
     "http_method": "GET"
   },
@@ -1969,6 +2630,19 @@
     "visibility": "private",
     "http_method": "GET"
   },
+  "findShopPaymentByReceipt": {
+    "name": "findShopPaymentByReceipt",
+    "description": "Get a Payment by Shop Receipt ID",
+    "uri": "/shops/:shop_id/receipts/:receipt_id/payments",
+    "params": {
+      "receipt_id": "int",
+      "shop_id": "shop_id_or_name"
+    },
+    "defaults": null,
+    "type": "Payment",
+    "visibility": "private",
+    "http_method": "GET"
+  },
   "submitTracking": {
     "name": "submitTracking",
     "description": "Submits tracking information and sends a shipping notification email to the buyer. If <code>send_bcc</code> is <code>true</code>, the shipping notification will be sent to the seller as well. Refer to <a href=\"/developers/documentation/getting_started/seller_tools#section_tracking_codes\">additional documentation</a>.",
@@ -2003,6 +2677,64 @@
     },
     "type": "Receipt",
     "visibility": "private",
+    "http_method": "GET"
+  },
+  "findAllOpenLocalDeliveryReceipts": {
+    "name": "findAllOpenLocalDeliveryReceipts",
+    "description": "Retrieves a set of open Local Delivery Receipt objects associated to a Shop.",
+    "uri": "/shops/:shop_id/receipts/local-delivery",
+    "params": {
+      "shop_id": "shop_id_or_name",
+      "limit": "int",
+      "offset": "int",
+      "page": "int"
+    },
+    "defaults": {
+      "limit": 25,
+      "offset": 0,
+      "page": null
+    },
+    "type": "Receipt",
+    "visibility": "private",
+    "http_method": "GET"
+  },
+  "searchAllShopReceipts": {
+    "name": "searchAllShopReceipts",
+    "description": "Searches the set of Receipt objects associated to a Shop by a query",
+    "uri": "/shops/:shop_id/receipts/search",
+    "params": {
+      "shop_id": "shop_id_or_name",
+      "search_query": "string",
+      "limit": "int",
+      "offset": "int",
+      "page": "int"
+    },
+    "defaults": {
+      "limit": 25,
+      "offset": 0,
+      "page": null
+    },
+    "type": "Receipt",
+    "visibility": "private",
+    "http_method": "GET"
+  },
+  "getShopReviews": {
+    "name": "getShopReviews",
+    "description": "Retrieves a list of reviews left for listings purchased from a shop",
+    "uri": "/shops/:shop_id/reviews",
+    "params": {
+      "shop_id": "shop_id_or_name",
+      "limit": "int",
+      "offset": "int",
+      "page": "int"
+    },
+    "defaults": {
+      "limit": 30,
+      "offset": 0,
+      "page": null
+    },
+    "type": "ReceiptReviews",
+    "visibility": "public",
     "http_method": "GET"
   },
   "findAllShopSections": {
@@ -2055,13 +2787,11 @@
       "shop_id": "shop_id_or_name",
       "shop_section_id": "int",
       "title": "text",
-      "user_id": "int",
-      "rank": "int"
+      "user_id": "int"
     },
     "defaults": {
       "title": null,
-      "user_id": null,
-      "rank": null
+      "user_id": null
     },
     "type": "ShopSection",
     "visibility": "private",
@@ -2145,9 +2875,12 @@
     "params": {
       "shop_id": "shop_id_or_name",
       "shop_section_id": "int",
-      "language": "language"
+      "language": "language",
+      "title": "string"
     },
-    "defaults": null,
+    "defaults": {
+      "title": false
+    },
     "type": "ShopSectionTranslation",
     "visibility": "private",
     "http_method": "POST"
@@ -2159,9 +2892,12 @@
     "params": {
       "shop_id": "shop_id_or_name",
       "shop_section_id": "int",
-      "language": "language"
+      "language": "language",
+      "title": "string"
     },
-    "defaults": null,
+    "defaults": {
+      "title": false
+    },
     "type": "ShopSectionTranslation",
     "visibility": "private",
     "http_method": "PUT"
@@ -2218,9 +2954,32 @@
     "uri": "/shops/:shop_id/translations/:language",
     "params": {
       "shop_id": "shop_id_or_name",
-      "language": "language"
+      "language": "language",
+      "title": "string",
+      "sale_message": "string",
+      "announcement": "string",
+      "policy_welcome": "string",
+      "policy_payment": "string",
+      "policy_shipping": "string",
+      "policy_refunds": "string",
+      "policy_additional": "string",
+      "policy_seller_info": "string",
+      "vacation_autoreply": "string",
+      "vacation_message": "string"
     },
-    "defaults": null,
+    "defaults": {
+      "title": false,
+      "sale_message": false,
+      "announcement": false,
+      "policy_welcome": false,
+      "policy_payment": false,
+      "policy_shipping": false,
+      "policy_refunds": false,
+      "policy_additional": false,
+      "policy_seller_info": false,
+      "vacation_autoreply": false,
+      "vacation_message": false
+    },
     "type": "ShopTranslation",
     "visibility": "private",
     "http_method": "POST"
@@ -2231,9 +2990,32 @@
     "uri": "/shops/:shop_id/translations/:language",
     "params": {
       "shop_id": "shop_id_or_name",
-      "language": "language"
+      "language": "language",
+      "title": "string",
+      "sale_message": "string",
+      "announcement": "string",
+      "policy_welcome": "string",
+      "policy_payment": "string",
+      "policy_shipping": "string",
+      "policy_refunds": "string",
+      "policy_additional": "string",
+      "policy_seller_info": "string",
+      "vacation_autoreply": "string",
+      "vacation_message": "string"
     },
-    "defaults": null,
+    "defaults": {
+      "title": false,
+      "sale_message": false,
+      "announcement": false,
+      "policy_welcome": false,
+      "policy_payment": false,
+      "policy_shipping": false,
+      "policy_refunds": false,
+      "policy_additional": false,
+      "policy_seller_info": false,
+      "vacation_autoreply": false,
+      "vacation_message": false
+    },
     "type": "ShopTranslation",
     "visibility": "private",
     "http_method": "PUT"
@@ -2250,6 +3032,28 @@
     "type": "ShopTranslation",
     "visibility": "private",
     "http_method": "DELETE"
+  },
+  "getListingShop": {
+    "name": "getListingShop",
+    "description": "Retrieves a shop by a listing id.",
+    "uri": "/shops/listing/:listing_id",
+    "params": {
+      "listing_id": "int"
+    },
+    "defaults": null,
+    "type": "Shop",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "getBuyerTaxonomy": {
+    "name": "getBuyerTaxonomy",
+    "description": "Retrieve the entire taxonomy as seen by buyers in search.",
+    "uri": "/taxonomy/buyer/get",
+    "params": null,
+    "defaults": null,
+    "type": "Taxonomy",
+    "visibility": "public",
+    "http_method": "GET"
   },
   "findAllTopCategory": {
     "name": "findAllTopCategory",
@@ -2283,6 +3087,38 @@
     },
     "defaults": null,
     "type": "Category",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "getTaxonomyNodeProperties": {
+    "name": "getTaxonomyNodeProperties",
+    "description": "Get the possible properties of a taxonomy node [developer preview - may be unstable]",
+    "uri": "/taxonomy/seller/:taxonomy_id/properties",
+    "params": {
+      "taxonomy_id": "int"
+    },
+    "defaults": null,
+    "type": "TaxonomyNodeProperty",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "getSellerTaxonomy": {
+    "name": "getSellerTaxonomy",
+    "description": "Retrieve the entire taxonomy as used by sellers in the listing process.",
+    "uri": "/taxonomy/seller/get",
+    "params": null,
+    "defaults": null,
+    "type": "Taxonomy",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "getSellerTaxonomyVersion": {
+    "name": "getSellerTaxonomyVersion",
+    "description": "Get the current version of the seller taxonomy",
+    "uri": "/taxonomy/seller/version",
+    "params": null,
+    "defaults": null,
+    "type": "Taxonomy",
     "visibility": "public",
     "http_method": "GET"
   },
@@ -2347,9 +3183,9 @@
     "visibility": "public",
     "http_method": "GET"
   },
-  "getTransaction": {
-    "name": "getTransaction",
-    "description": "Retrieves a Transaction by id.",
+  "getShop_Transaction": {
+    "name": "getShop_Transaction",
+    "description": "Retrieves a Shop_Transaction by id.",
     "uri": "/transactions/:transaction_id",
     "params": {
       "transaction_id": "array(int)"
@@ -2382,26 +3218,6 @@
     "type": "Treasury",
     "visibility": "public",
     "http_method": "GET"
-  },
-  "createTreasury": {
-    "name": "createTreasury",
-    "description": "Create a Treasury",
-    "uri": "/treasuries",
-    "params": {
-      "title": "treasury_title",
-      "description": "treasury_description",
-      "listing_ids": "array(int)",
-      "tags": "array(string)",
-      "private": "boolean"
-    },
-    "defaults": {
-      "description": null,
-      "tags": "",
-      "private": 0
-    },
-    "type": "Treasury",
-    "visibility": "private",
-    "http_method": "POST"
   },
   "getTreasury": {
     "name": "getTreasury",
@@ -2589,7 +3405,7 @@
   },
   "createUserAddress": {
     "name": "createUserAddress",
-    "description": "Creates a new UserAddress.",
+    "description": "Creates a new UserAddress. Note: state is required when the country is US, Canada, or Australia. See section above about valid codes.",
     "uri": "/users/:user_id/addresses/",
     "params": {
       "user_id": "user_id_or_name",
@@ -2633,23 +3449,6 @@
     "visibility": "private",
     "http_method": "DELETE"
   },
-  "uploadAvatar": {
-    "name": "uploadAvatar",
-    "description": "Upload a new user avatar image",
-    "uri": "/users/:user_id/avatar",
-    "params": {
-      "src": "string",
-      "user_id": "user_id_or_name",
-      "image": "image"
-    },
-    "defaults": {
-      "src": null,
-      "image": null
-    },
-    "type": "Avatar",
-    "visibility": "private",
-    "http_method": "POST"
-  },
   "getAvatarImgSrc": {
     "name": "getAvatarImgSrc",
     "description": "Get avatar image source",
@@ -2679,9 +3478,16 @@
     "description": "Get a user's Carts",
     "uri": "/users/:user_id/carts",
     "params": {
-      "user_id": "user_id_or_name"
+      "user_id": "user_id_or_name",
+      "limit": "int",
+      "offset": "int",
+      "page": "int"
     },
-    "defaults": null,
+    "defaults": {
+      "limit": 100,
+      "offset": 0,
+      "page": null
+    },
     "type": "Cart",
     "visibility": "private",
     "http_method": "GET"
@@ -2759,12 +3565,16 @@
       "cart_id": "cart_id",
       "destination_country_id": "int",
       "message_to_seller": "text",
-      "coupon_code": "string"
+      "coupon_code": "string",
+      "shipping_option_id": "string",
+      "destination_zip": "string"
     },
     "defaults": {
       "destination_country_id": null,
       "message_to_seller": null,
-      "coupon_code": null
+      "coupon_code": null,
+      "shipping_option_id": null,
+      "destination_zip": null
     },
     "type": "Cart",
     "visibility": "private",
@@ -2783,6 +3593,27 @@
     "visibility": "private",
     "http_method": "DELETE"
   },
+  "addAndSelectShippingForApplePay": {
+    "name": "addAndSelectShippingForApplePay",
+    "description": "Saves and selects a shipping address for apple pay",
+    "uri": "/users/:user_id/carts/:cart_id/add_and_select_shipping_for_apple",
+    "params": {
+      "user_id": "user_id_or_name",
+      "cart_id": "cart_id",
+      "second_line": "string",
+      "city": "string",
+      "state": "string",
+      "zip": "string",
+      "country_id": "int"
+    },
+    "defaults": {
+      "second_line": null,
+      "state": null
+    },
+    "type": "Cart",
+    "visibility": "private",
+    "http_method": "POST"
+  },
   "findAllCartListings": {
     "name": "findAllCartListings",
     "description": "Finds all listings in a given Cart",
@@ -2795,6 +3626,56 @@
     "type": "Listing",
     "visibility": "private",
     "http_method": "GET"
+  },
+  "saveListingForLater": {
+    "name": "saveListingForLater",
+    "description": "Move a listing to Saved for Later",
+    "uri": "/users/:user_id/carts/save",
+    "params": {
+      "user_id": "user_id_or_name",
+      "cart_id": "int",
+      "listing_id": "int",
+      "listing_inventory_id": "int",
+      "listing_customization_id": "int"
+    },
+    "defaults": {
+      "listing_inventory_id": 0,
+      "listing_customization_id": 0
+    },
+    "type": "Cart",
+    "visibility": "private",
+    "http_method": "DELETE"
+  },
+  "getUserCartForShop": {
+    "name": "getUserCartForShop",
+    "description": "Get a cart from a shop ID",
+    "uri": "/users/:user_id/carts/shop/:shop_id",
+    "params": {
+      "user_id": "user_id_or_name",
+      "shop_id": "shop_id_or_name"
+    },
+    "defaults": null,
+    "type": "Cart",
+    "visibility": "private",
+    "http_method": "GET"
+  },
+  "createSingleListingCart": {
+    "name": "createSingleListingCart",
+    "description": "Create a single-listing cart from a listing",
+    "uri": "/users/:user_id/carts/single_listing",
+    "params": {
+      "user_id": "user_id_or_name",
+      "listing_id": "int",
+      "quantity": "int",
+      "selected_variations": "map(int, int)"
+    },
+    "defaults": {
+      "quantity": 1,
+      "selected_variations": null
+    },
+    "type": "Cart",
+    "visibility": "private",
+    "http_method": "POST"
   },
   "findAllUserCharges": {
     "name": "findAllUserCharges",
@@ -2883,6 +3764,50 @@
     "defaults": null,
     "type": "User",
     "visibility": "private",
+    "http_method": "DELETE"
+  },
+  "listFollowingPages": {
+    "name": "listFollowingPages",
+    "description": "Lists the pages that the current user is following",
+    "uri": "/users/:user_id/connected_pages",
+    "params": {
+      "limit": "int",
+      "offset": "int",
+      "page": "int"
+    },
+    "defaults": {
+      "limit": 25,
+      "offset": 0,
+      "page": null
+    },
+    "type": "Page",
+    "visibility": "public",
+    "http_method": "GET"
+  },
+  "followPage": {
+    "name": "followPage",
+    "description": "Follow a page.",
+    "uri": "/users/:user_id/connected_pages",
+    "params": {
+      "user_id": "user_id_or_name",
+      "page_id": "int"
+    },
+    "defaults": null,
+    "type": null,
+    "visibility": "public",
+    "http_method": "POST"
+  },
+  "unfollowPage": {
+    "name": "unfollowPage",
+    "description": "Unfollow a page.",
+    "uri": "/users/:user_id/connected_pages/:page_id",
+    "params": {
+      "user_id": "user_id_or_name",
+      "page_id": "int"
+    },
+    "defaults": null,
+    "type": null,
+    "visibility": "public",
     "http_method": "DELETE"
   },
   "getConnectedUsers": {
@@ -3166,29 +4091,6 @@
     },
     "type": "Feedback",
     "visibility": "public",
-    "http_method": "GET"
-  },
-  "findAllUserOrders": {
-    "name": "findAllUserOrders",
-    "description": "Retrieves a set of Order objects associated to a User.",
-    "uri": "/users/:user_id/orders",
-    "params": {
-      "user_id": "user_id_or_name",
-      "min_created": "epoch",
-      "max_created": "epoch",
-      "limit": "int",
-      "offset": "int",
-      "page": "int"
-    },
-    "defaults": {
-      "min_created": null,
-      "max_created": null,
-      "limit": 25,
-      "offset": 0,
-      "page": null
-    },
-    "type": "Order",
-    "visibility": "private",
     "http_method": "GET"
   },
   "findAllUserPayments": {
