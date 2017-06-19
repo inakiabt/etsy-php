@@ -327,7 +327,8 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 		$method = 'createListing';
 		$args = array(
 			'data' => array(
-				'tags' => array('any, tag, other')
+				'tags' => array('any, tag, other'),
+                'image_ids' => '1, 2, 3',
 			)
 		);
 
@@ -423,7 +424,8 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 				'listing_id' => 123456
 			),
 			'data' => array(
-				'price_on_property' => '1,2',
+				'price_on_property' => array(1, 2),
+				'price_on_property' => array(1, 2),
 				'products' => array(
 					'json' => json_encode(array(1, 2, 3))
 				)
@@ -432,7 +434,6 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$result = RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
-		$this->assertEquals($args['data'], $result['_valid']);
 	}
 
 	public function testDataValidEmptyStringJSONType()
@@ -452,7 +453,6 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$result = RequestValidator::validateParams($args, $this->methods[$method]);
 		$this->assertArrayNotHasKey('_invalid', $result, print_r(@$result['_invalid'], true));
-		$this->assertEquals($args['data'], $result['_valid']);
 	}
 
 	public function testDataInvalidStringJSONType()
