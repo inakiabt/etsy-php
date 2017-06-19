@@ -327,8 +327,8 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 		$method = 'createListing';
 		$args = array(
 			'data' => array(
-				'tags' => array('any, tag, other'),
-                'image_ids' => '1, 2, 3',
+				'tags' => array('any, tag, other'),     //array(string)
+                'image_ids' => array('1, 2, 3'),        //array(int)
 			)
 		);
 
@@ -424,7 +424,6 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 				'listing_id' => 123456
 			),
 			'data' => array(
-				'price_on_property' => array(1, 2),
 				'price_on_property' => array(1, 2),
 				'products' => array(
 					'json' => json_encode(array(1, 2, 3))

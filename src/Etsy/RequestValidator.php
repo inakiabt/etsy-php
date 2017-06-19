@@ -70,6 +70,7 @@ class RequestValidator
 			{
 				$validType = $methodsParams[$name];
 				$type = self::transformValueType(gettype($arg));
+
 				switch($type)
 				{
 					case 'array':
@@ -98,18 +99,14 @@ class RequestValidator
 								$arg = @$arg[0];
 							} else {
 								$item_type = self::transformValueType(@gettype($arg[0]));
+								if($item_type == 'string' && preg_match("/^[\s0-9,]+$/", $arg[0])) {  //is comma separated integer string
+                                    $item_type = 'int';
+								}
 								$type = 'array('.$item_type.')';
 							}
 						}
 
                         break;
-
-                    case 'string':
-                        if(preg_match("/^[\s0-9,]+$/", $arg)) {   //is comma separated integer string
-                            $type = 'array(int)';
-                        }
-                        break;
-
 				}
 
                 if ($validType !== $type) {
