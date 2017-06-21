@@ -424,7 +424,7 @@ class RequestValidatorTest extends \PHPUnit_Framework_TestCase
 				'listing_id' => 123456
 			),
 			'data' => array(
-				'price_on_property' => array(1, 2),
+				'price_on_property' => [implode(',', array(1, 2))],
 				'products' => array(
 					'json' => json_encode(array(1, 2, 3))
 				)
