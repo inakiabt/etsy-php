@@ -70,10 +70,11 @@ class RequestValidator
 			{
 				$validType = $methodsParams[$name];
 				$type = self::transformValueType(gettype($arg));
+
 				switch($type)
 				{
 					case 'array':
-						if (@array_key_exists('json', $arg)) {
+						if (@array_key_exists('json', $arg) && json_decode($arg['json']) !== NULL) {
 							$type = 'json';
 							$arg = $arg['json'];
 							break;
@@ -98,35 +99,37 @@ class RequestValidator
 								$arg = @$arg[0];
 							} else {
 								$item_type = self::transformValueType(@gettype($arg[0]));
+								if($item_type == 'string' && preg_match("/^[\s0-9,]+$/", $arg[0])) {  //is comma separated integer string
+                                    $item_type = 'int';
+								}
 								$type = 'array('.$item_type.')';
 							}
 						}
-						break;
 
+                        break;
 				}
-				if ($validType !== $type)
-				{
-					if (substr($validType, 0, 4) === 'enum')
-					{
-						if ($arg === 'enum' || !preg_match("@".preg_quote($arg)."@", $validType))
-						{
-							$result['_invalid'][] = 'Invalid enum data param "'.$name.'" value ('.$arg.'): valid values "'.$validType.'"';
-						} else {
-							$result['_valid'][$name] = $arg;
-						}
-					} elseif ($type === 'array' && substr($validType, 0, 5) === 'array' ||
-							$type === 'string' && $validType === 'text')
-					{
-						$result['_valid'][$name] = $arg;
-					} elseif ($type === 'json' && substr($validType, 0, 5) === 'array')
-					{
-						$result['_valid'][$name] = $arg;
-					} else {
-						$result['_invalid'][] = RequestValidator::invalidParamType($name, $arg, $type, $validType);
-					}
-				} else {
-					$result['_valid'][$name] = $arg;
-				}
+
+                if ($validType !== $type) {
+                    if (substr($validType, 0, 4) === 'enum') {
+                        if ($arg === 'enum' || !preg_match("@" . preg_quote($arg) . "@", $validType)) {
+                            $result['_invalid'][] = 'Invalid enum data param "' . $name . '" value (' . $arg . '): valid values "' . $validType . '"';
+                        } else {
+                            $result['_valid'][$name] = $arg;
+                        }
+                    } elseif ($type === 'array' && substr($validType, 0, 5) === 'array' ||
+                        $type === 'string' && $validType === 'text'
+                    ) {
+                        $result['_valid'][$name] = $arg;
+                    } elseif ($type === 'json' && substr($validType, 0, 5) === 'array') {
+                        $result['_valid'][$name] = $arg;
+                    } elseif ($type === 'json' && substr($validType, 0, 6) === 'string') {
+                        $result['_valid'][$name] = $arg;
+                    } else {
+                        $result['_invalid'][] = RequestValidator::invalidParamType($name, $arg, $type, $validType);
+                    }
+                } else {
+                    $result['_valid'][$name] = $arg;
+                }
 			} else {
 				$result['_invalid'][] = RequestValidator::invalidParam($name, $arg, gettype($arg));
 			}
