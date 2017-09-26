@@ -36,10 +36,11 @@ class EtsyApi
 	{
 		$method = $this->methods[$arguments['method']];
 		$args = $arguments['args'];
-		$params = $this->prepareParameters($args['params']);
 		$data = @$this->prepareData($args['data']);
+		$params = @array_merge(@$this->prepareData($args['params']), $data);
 
 		$uri = preg_replace_callback('@:(.+?)(\/|$)@', function($matches) use ($args) {
+			unset($params[$matches[1]]);
 			return $args["params"][$matches[1]].$matches[2];
 		}, $method['uri']);
 
@@ -53,11 +54,13 @@ class EtsyApi
 			$params['fields'] = $this->prepareFields($args['fields']);
 		}
 
-		if(!empty($params)) {
-			$uri .= "?" . http_build_query($params);
+		if($method === 'GET') {
+			if (!empty($params)) {
+				$uri .= "?" . http_build_query($params);
+			}
 		}
 
-		return $this->validateResponse( $args, $this->client->request($uri, $data, $method['http_method'], $this->returnJson) );
+		return $this->validateResponse( $args, $this->client->request($uri, $params, $method['http_method'], $this->returnJson) );
 	}
 
 	protected function validateResponse($request_args, $response)
