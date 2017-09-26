@@ -35,13 +35,8 @@ class RequestValidator
 			}
 		}
 
-		if (isset($args['data']))
-		{
-			$dataResult = RequestValidator::validateData($args['data'], $methodInfo);
-			return array_merge($result, $dataResult);
-		}
-
-		return $result;
+		$dataResult = RequestValidator::validateData($args['params'], $methodInfo);
+		return array_merge($result, $dataResult);
 	}
 
 	protected static function transformValueType($type) {
