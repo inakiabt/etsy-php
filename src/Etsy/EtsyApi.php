@@ -36,8 +36,7 @@ class EtsyApi
 	{
 		$method = $this->methods[$arguments['method']];
 		$args = $arguments['args'];
-		$data = @$this->prepareData($args['data']);
-		$params = @array_merge(@$this->prepareData($args['params']), $data);
+		$params = @$this->prepareData($args['params']);
 
 		$uri = preg_replace_callback('@:(.+?)(\/|$)@', function($matches) use ($args) {
 			unset($params[$matches[1]]);
@@ -111,21 +110,6 @@ class EtsyApi
 		return $result;
 	}
 
-	private function prepareParameters($params) {
-		$query_pairs = array();
-		$allowed = array("limit", "offset", "page", "sort_on", "sort_order", "include_private", "language");
-
-		if ($params) {
-			foreach($params as $key=>$value) {
-				if (in_array($key, $allowed)) {
-					$query_pairs[$key] = $value;
-				}
-			}
-		}
-
-		return $query_pairs;
-	}
-
 	private function prepareAssociations($associations)
 	{
 		$includes = array();
@@ -144,7 +128,6 @@ class EtsyApi
 
 	private function prepareFields($fields)
 	{
-
 		return implode(',', $fields);
 	}
 
@@ -183,22 +166,26 @@ class EtsyApi
 	public function __call($method, $args) {
 		if (isset($this->methods[$method]))
 		{
-			$validArguments = RequestValidator::validateParams(@$args[0], $this->methods[$method]);
+			$first = isset($arg[0]) ? $arg[0] : [];
+			$params = isset($first['params']) ? $first['params'] : [];
+			$data = isset($first['data']) ? $first['data'] : [];
+			$toValidate = array('params' => @array_merge($params, $data));
+			$validArguments = RequestValidator::validateParams($toValidate, $this->methods[$method]);
 			if (isset($validArguments['_invalid']))
 			{
 				throw new \Exception('Invalid params for method "'.$method.'": ' . implode(', ', $validArguments['_invalid']) . ' - ' . json_encode($this->methods[$method]));
 			}
 
 			return call_user_func_array(array($this, 'request'), array(
-																	array(
-																		'method' => $method,
-																		'args' => array(
-																					'data' => @$validArguments['_valid'],
-																					'params' => @$args[0]['params'],
-																					'associations' => @$args[0]['associations'],
-																					'fields' => @$args[0]['fields']
-																					)
-																	)));
+				array(
+					'method' => $method,
+					'args' => array(
+						'params' => @$validArguments['_valid'],
+						'associations' => @$args[0]['associations'],
+						'fields' => @$args[0]['fields']
+					)
+				)
+			));
 		} else {
 			throw new \Exception('Method "'.$method.'" not exists');
 		}
