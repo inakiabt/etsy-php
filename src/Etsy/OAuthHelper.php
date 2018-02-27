@@ -22,12 +22,20 @@ class OAuthHelper
         return $this->request_token['login_url'];
     }
 
-    public function getAccessToken($verifier)
+    public function getAccessToken($verifier, $oauth_token = false, $oauth_token_secret = false)
     {
-        $this->client->authorize($this->request_token['oauth_token'], $this->request_token['oauth_token_secret']);
-
+        if (!$oauth_token) {
+            $oauth_token = $this->request_token['oauth_token'];
+        } else {
+            $this->request_token['oauth_token'] = $oauth_token;
+        }
+        if (!$oauth_token_secret) {
+            $oauth_token_secret = $this->request_token['oauth_token_secret'];
+        } else {
+            $this->request_token['oauth_token_secret'] = $oauth_token_secret;
+        }
+        $this->client->authorize($oauth_token, $oauth_token_secret);
         $this->access_token = $this->client->getAccessToken($verifier);
-
         return $this->getAuth();
     }
 
