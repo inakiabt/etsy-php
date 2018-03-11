@@ -2605,8 +2605,8 @@
     "uri": "/shops/:shop_id/receipts",
     "params": {
       "shop_id": "shop_id_or_name",
-      "min_created": "epoch",
-      "max_created": "epoch",
+      "min_created": "int",
+      "max_created": "int",
       "min_last_modified": "int",
       "max_last_modified": "int",
       "limit": "int",
