@@ -93,7 +93,7 @@ class EtsyClient
 	public function getAccessToken($verifier)
 	{
 	    try {
-			return $this->oauth->getAccessToken($this->base_url . "/oauth/access_token", null, $verifier);
+			return $this->oauth->getAccessToken($this->base_url . "/oauth/access_token", null, $verifier, 'GET');
 	    } catch (\OAuthException $e) {
 	        throw new EtsyRequestException($e, $this->oauth);
 	    }
