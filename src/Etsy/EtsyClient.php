@@ -6,14 +6,14 @@ namespace Etsy;
 */
 class EtsyClient
 {
-	private $base_url = "https://openapi.etsy.com/v2";
-	private $base_path = "/private";
-	private $oauth = null;
-	private $authorized = false;
-	private $debug = true;
+	protected $base_url = "https://openapi.etsy.com/v2";
+	protected $base_path = "/private";
+	protected $oauth = null;
+	protected $authorized = false;
+	protected $debug = true;
 
-	private $consumer_key = "";
-	private $consumer_secret = "";
+	protected $consumer_key = "";
+	protected $consumer_secret = "";
 
 	function __construct($consumer_key, $consumer_secret)
 	{
@@ -68,7 +68,7 @@ class EtsyClient
 	    }
 	}
 
-	public function getRequestToken(array $extra = array())
+	public function getRequestToken(array $extra = array(), $method = 'POST')
 	{
 	    $url = $this->base_url . "/oauth/request_token";
 	    $callback = 'oob';
@@ -82,7 +82,7 @@ class EtsyClient
 	    	$callback = $extra['callback'];
 	    }
 	    try {
-		return $this->oauth->getRequestToken($url, $callback);
+		return $this->oauth->getRequestToken($url, $callback, $method);
 	    } catch (\OAuthException $e) {
 	        throw new EtsyRequestException($e, $this->oauth);
 	    }
