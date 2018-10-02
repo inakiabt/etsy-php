@@ -8,7 +8,7 @@ php:
 
 # Commands to be run before your environment runs.
 before_script:
-  - pecl install oauth-1.2.3
+  - pecl install oauth
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
 # Commands you want to run that will verify your build.
