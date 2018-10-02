@@ -1,7 +1,9 @@
 <?php
 namespace Etsy;
 
-class RequestValidatorTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class RequestValidatorTest extends TestCase
 {
 	protected $methods;
 	protected $requiredParamRegExp = '@Required parameter ".+?" not found@';

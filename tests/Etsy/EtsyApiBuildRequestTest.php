@@ -1,7 +1,9 @@
 <?php
 namespace Etsy;
 
-class EtsyApiBuildRequestTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class EtsyApiBuildRequestTest extends TestCase
 {
 	protected $api;
 
