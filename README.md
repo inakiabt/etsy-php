@@ -189,7 +189,7 @@ There are some methods that Etsy requires to be a JSON string encoded param (ie:
 
 ## Testing ##
 ```bash
-$ vendor/bin/phpunit src/test/
+$ vendor/bin/phpunit
 ```
 
 ## Changelog
