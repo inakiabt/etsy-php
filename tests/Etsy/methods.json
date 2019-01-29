@@ -758,7 +758,7 @@
     "uri": "/listings/:listing_id/inventory",
     "params": {
       "listing_id": "int",
-      "products": "stringJSON",
+      "products": "string",
       "price_on_property": "array(int)",
       "quantity_on_property": "array(int)",
       "sku_on_property": "array(int)"

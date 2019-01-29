@@ -109,6 +109,11 @@ class RequestValidator
                         break;
 				}
 
+                //Changing type to float if float is expected but integer is given, since php converts floats without decimals to integers
+                if ($validType == 'float' && $type == 'int') {
+                    $type = 'float';
+                }
+
                 if ($validType !== $type) {
                     if (substr($validType, 0, 4) === 'enum') {
                         if ($arg === 'enum' || !preg_match("@" . preg_quote($arg) . "@", $validType)) {
