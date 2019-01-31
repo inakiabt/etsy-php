@@ -112,6 +112,10 @@ class EtsyApi
 		$query_pairs = array();
 		$allowed = array("limit", "offset", "page", "sort_on", "sort_order", "include_private", "language");
 
+		//allowing additional params that are only usable in the updateInventory method, because oauth can't handle these in the data array
+		$allowed[] = 'price_on_property';
+		$allowed[] = 'quantity_on_property';
+
 		if ($params) {
 			foreach($params as $key=>$value) {
 				if (in_array($key, $allowed)) {
