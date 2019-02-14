@@ -115,6 +115,7 @@ class EtsyApi
 		//allowing additional params that are only usable in the updateInventory method, because oauth can't handle these in the data array
 		$allowed[] = 'price_on_property';
 		$allowed[] = 'quantity_on_property';
+		$allowed[] = 'sku_on_property';
 
 		if ($params) {
 			foreach($params as $key=>$value) {
