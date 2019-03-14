@@ -463,7 +463,7 @@
       "renew": "boolean",
       "shipping_template_id": "int",
       "shop_section_id": "int",
-      "state": "enum(active, inactive, draft)",
+      "state": "enum(active, inactive, draft, edit)",
       "image_ids": "array(int)",
       "is_customizable": "boolean",
       "item_weight": "float",
