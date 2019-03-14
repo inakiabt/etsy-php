@@ -408,7 +408,7 @@
       "style": "array(string)",
       "should_auto_renew": "boolean",
       "item_weight": "int",
-      "item_weight_units": "string",
+      "item_weight_unit": "string",
       "item_height": "int",
       "item_dimensions_unit": "string",
       "item_length": "int",
