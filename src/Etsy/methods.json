@@ -394,7 +394,7 @@
       "is_customizable": "boolean",
       "non_taxable": "boolean",
       "image": "image",
-      "state": "enum(active, draft)",
+      "state": "enum(active, draft, edit)",
       "processing_min": "int",
       "processing_max": "int",
       "category_id": "int",
