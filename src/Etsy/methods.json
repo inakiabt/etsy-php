@@ -406,7 +406,13 @@
       "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets, not_specified)",
       "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanzaa, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding)",
       "style": "array(string)",
-      "should_auto_renew": "boolean"
+      "should_auto_renew": "boolean",
+      "item_weight": "int",
+      "item_weight_units": "string",
+      "item_height": "int",
+      "item_dimensions_unit": "string",
+      "item_length": "int",
+      "item_width": "int"
     },
     "defaults": {
       "materials": null,
