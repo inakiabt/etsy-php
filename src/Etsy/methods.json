@@ -387,7 +387,6 @@
       "title": "string",
       "description": "text",
       "price": "float",
-      //We have to validate arrays as string because oauth lib can't handle arrays
       "materials": "string",
       "shipping_template_id": "int",
       "shop_section_id": "int",
