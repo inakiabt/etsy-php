@@ -484,6 +484,8 @@
       "style": "string",
       "processing_min": "int",
       "processing_max": "int",
+      "should_auto_renew": "boolean",
+      "write_missing_inventory": "boolean",
       "featured_rank": "featured_rank"
     },
     "defaults": {
