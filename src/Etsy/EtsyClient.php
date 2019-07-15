@@ -62,6 +62,8 @@ class EtsyClient
 	        $data = $this->oauth->fetch($this->base_url . $this->base_path . $path, $params, $method);
 	        $response = $this->oauth->getLastResponse();
 
+	        return $params;
+
 	        return json_decode($response, !$json);
 	    } catch (\OAuthException $e) {
 	        throw new EtsyRequestException($e, $this->oauth, $params);
