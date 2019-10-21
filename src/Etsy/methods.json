@@ -9,7 +9,7 @@
     "visibility": "public",
     "http_method": "GET"
   },
-   "updateVariationImages":{
+    "updateVariationImages":{
     "name": "updateVariationImages",
     "description": "Creates variation images on a listing",
     "uri": "/listings/:listing_id/variation-images",
@@ -17,6 +17,11 @@
       "listing_id": "int",
       "variation_images": "array"
     },
+    "defaults": null,
+    "type": null,
+    "visibility": "public",
+    "http_method": "POST"
+  },
   "getPublicBaseline": {
     "name": "getPublicBaseline",
     "description": "Pings a public v2 uri to get a performance baseline",
