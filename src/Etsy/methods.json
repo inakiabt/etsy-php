@@ -396,6 +396,7 @@
     "description": "Creates a new Listing. NOTE: A shipping_template_id is required when creating a listing. <strong>NOTE: All listings created on www.etsy.com must be actual items for sale. Please see our <a href='/developers/documentation/getting_started/testing'>guidelines for testing</a> with live listings.</strong>",
     "uri": "/listings",
     "params": {
+      "language": "string",
       "quantity": "int",
       "title": "string",
       "description": "text",
