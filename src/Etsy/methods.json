@@ -9,6 +9,19 @@
     "visibility": "public",
     "http_method": "GET"
   },
+    "updateVariationImages":{
+    "name": "updateVariationImages",
+    "description": "Creates variation images on a listing",
+    "uri": "/listings/:listing_id/variation-images",
+    "params": {
+      "listing_id": "int",
+      "variation_images": "array"
+    },
+    "defaults": null,
+    "type": null,
+    "visibility": "public",
+    "http_method": "POST"
+  },
   "getPublicBaseline": {
     "name": "getPublicBaseline",
     "description": "Pings a public v2 uri to get a performance baseline",
@@ -383,11 +396,12 @@
     "description": "Creates a new Listing. NOTE: A shipping_template_id is required when creating a listing. <strong>NOTE: All listings created on www.etsy.com must be actual items for sale. Please see our <a href='/developers/documentation/getting_started/testing'>guidelines for testing</a> with live listings.</strong>",
     "uri": "/listings",
     "params": {
+      "language": "string",
       "quantity": "int",
       "title": "string",
       "description": "text",
       "price": "float",
-      "materials": "array(string)",
+      "materials": "string",
       "shipping_template_id": "int",
       "shop_section_id": "int",
       "image_ids": "array(int)",
@@ -399,13 +413,20 @@
       "processing_max": "int",
       "category_id": "int",
       "taxonomy_id": "int",
-      "tags": "array(string)",
+      "tags": "string",
       "who_made": "enum(i_did, collective, someone_else)",
       "is_supply": "boolean",
-      "when_made": "enum(made_to_order, 2010_2018, 2000_2009, 1999_1999, before_1999, 1990_1998, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
-      "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets, not_specified)",
-      "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanzaa, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding)",
-      "style": "array(string)"
+      "when_made": "enum(made_to_order, 2020_2020, 2010_2019, 2000_2009, before_2000, 1990s, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
+      "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets, mnner, frauen, unisex_erwachsene, teenager__jungen, teenager__mdchen, jugendliche, jungs, mdchen, kinder, babys__jungen, babys__mdchen, babys, vgel, katzen, hunde, haustiere, not_specified)",
+      "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanzaa, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding, ubilum, taufe, bar_oder_bat_mizwa, geburtstag, canada_day, chinesisches_neujahr, cinco_de_mayo, konfirmation, weihnachten, day_of_the_dead, ostern, eid, verlobung, vatertag, gute_besserung, abschluss, halloween, chanukka, hauseinweihung, kwanzaa, prom, der_4_juli, muttertag, neugeborenes, neujahr, quinceanera, ruhestand, st_patricks_day, sweet_16, anteilnahme, thanksgiving, valentinstag, hochzeit)",
+      "style": "string",
+      "should_auto_renew": "boolean",
+      "item_weight": "int",
+      "item_weight_unit": "string",
+      "item_height": "int",
+      "item_dimensions_unit": "string",
+      "item_length": "int",
+      "item_width": "int"
     },
     "defaults": {
       "materials": null,
@@ -437,6 +458,7 @@
       "listing_id": "array(int)"
     },
     "defaults": null,
+    "defaults": null,
     "type": "Listing",
     "visibility": "public",
     "http_method": "GET"
@@ -452,7 +474,7 @@
       "description": "text",
       "price": "float",
       "wholesale_price": "float",
-      "materials": "array(string)",
+      "materials": "string",
       "renew": "boolean",
       "shipping_template_id": "int",
       "shop_section_id": "int",
@@ -468,15 +490,17 @@
       "non_taxable": "boolean",
       "category_id": "int",
       "taxonomy_id": "int",
-      "tags": "array(string)",
+      "tags": "string",
       "who_made": "enum(i_did, collective, someone_else)",
       "is_supply": "boolean",
-      "when_made": "enum(made_to_order, 2010_2018, 2000_2009, 1999_1999, before_1999, 1990_1998, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
-      "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets, not_specified)",
-      "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanzaa, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding)",
-      "style": "array(string)",
+      "when_made": "enum(made_to_order, 2020_2020, 2010_2019, 2000_2009, before_2000, 1990s, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
+      "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets, mnner, frauen, unisex_erwachsene, teenager__jungen, teenager__mdchen, jugendliche, jungs, mdchen, kinder, babys__jungen, babys__mdchen, babys, vgel, katzen, hunde, haustiere, not_specified)",
+      "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanzaa, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding, ubilum, taufe, bar_oder_bat_mizwa, geburtstag, canada_day, chinesisches_neujahr, cinco_de_mayo, konfirmation, weihnachten, day_of_the_dead, ostern, eid, verlobung, vatertag, gute_besserung, abschluss, halloween, chanukka, hauseinweihung, kwanzaa, prom, der_4_juli, muttertag, neugeborenes, neujahr, quinceanera, ruhestand, st_patricks_day, sweet_16, anteilnahme, thanksgiving, valentinstag, hochzeit)",
+      "style": "string",
       "processing_min": "int",
       "processing_max": "int",
+      "should_auto_renew": "boolean",
+      "write_missing_inventory": "boolean",
       "featured_rank": "featured_rank"
     },
     "defaults": {
@@ -758,7 +782,7 @@
     "uri": "/listings/:listing_id/inventory",
     "params": {
       "listing_id": "int",
-      "products": "stringJSON",
+      "products": "string",
       "price_on_property": "array(int)",
       "quantity_on_property": "array(int)",
       "sku_on_property": "array(int)"
@@ -927,7 +951,7 @@
       "language": "language",
       "title": "string",
       "description": "text",
-      "tags": "array(string)"
+      "tags": "string"
     },
     "defaults": {
       "title": false,
@@ -947,7 +971,7 @@
       "language": "language",
       "title": "string",
       "description": "text",
-      "tags": "array(string)"
+      "tags": "string"
     },
     "defaults": {
       "title": false,
@@ -2605,8 +2629,8 @@
     "uri": "/shops/:shop_id/receipts",
     "params": {
       "shop_id": "shop_id_or_name",
-      "min_created": "epoch",
-      "max_created": "epoch",
+      "min_created": "int",
+      "max_created": "int",
       "min_last_modified": "int",
       "max_last_modified": "int",
       "limit": "int",
@@ -2742,7 +2766,7 @@
     "description": "Retrieves a set of ShopSection objects associated to a Shop.",
     "uri": "/shops/:shop_id/sections",
     "params": {
-      "shop_id": "shop_id_or_name"
+      "shop_id": "int"
     },
     "defaults": null,
     "type": "ShopSection",
