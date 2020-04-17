@@ -1,6 +1,6 @@
 {
     "name": "inakiabt/etsy-php",
-    "version": "0.12.1",
+    "version": "0.12.2",
     "description": "Simple PHP wrapper for Etsy API",
     "license": "MIT",
     "authors": [
