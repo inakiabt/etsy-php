@@ -88,7 +88,7 @@ class RequestValidator
 								{
 									$valueTypes[] = self::transformValueType(gettype($value));
 								}
-								$type = 'map(' . implode($valueTypes, ', ') . ')';
+								$type = 'map(' . implode(', ', $valueTypes) . ')';
 								break;
 							}
 
