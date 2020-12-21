@@ -96,13 +96,18 @@ class EtsyApi
 	private function prepareData($data) {
 		$result = array();
 		foreach ($data as $key => $value) {
-			$type = gettype($value);
-			if ($type !== 'boolean') {
-				$result[$key] = $value;
-				continue;
-			}
-
-			$result[$key] = $value ? 1 : 0;
+            $type = gettype($value);
+            switch ($type) {
+                case 'boolean':
+                    $result[$key] = $value ? 1 : 0;
+                    break;
+                case 'array':
+                    $result[$key] = implode(',', $value);
+                    break;
+                default:
+                	$result[$key] = $value;
+                    break;
+            }
 		}
 
 		return $result;
