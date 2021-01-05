@@ -88,7 +88,7 @@ class RequestValidator
 								{
 									$valueTypes[] = self::transformValueType(gettype($value));
 								}
-								$type = 'map(' . implode($valueTypes, ', ') . ')';
+								$type = 'map(' . implode(', ', $valueTypes) . ')';
 								break;
 							}
 
@@ -110,7 +110,9 @@ class RequestValidator
 				}
 
                 if ($validType !== $type) {
-                    if (substr($validType, 0, 4) === 'enum') {
+                    if ('epoch' === $validType && false !== strtotime($arg)) {
+                        $result['_valid'][$name] = $arg;
+                    } elseif (substr($validType, 0, 4) === 'enum') {
                         if ($arg === 'enum' || !preg_match("@" . preg_quote($arg) . "@", $validType)) {
                             $result['_invalid'][] = 'Invalid enum data param "' . $name . '" value (' . $arg . '): valid values "' . $validType . '"';
                         } else {
