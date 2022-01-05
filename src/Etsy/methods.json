@@ -416,7 +416,7 @@
       "tags": "string",
       "who_made": "enum(i_did, collective, someone_else)",
       "is_supply": "boolean",
-      "when_made": "enum(made_to_order, 2020_2020, 2010_2019, 2000_2009, before_2000, 1990s, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
+      "when_made": "enum(made_to_order, 2020_2022, 2020_2020, 2010_2019, 2000_2009, before_2000, 1990s, 1980s, 1970s, 1960s, 1950s, 1940s, 1930s, 1920s, 1910s, 1900s, 1800s, 1700s, before_1700)",
       "recipient": "enum(men, women, unisex_adults, teen_boys, teen_girls, teens, boys, girls, children, baby_boys, baby_girls, babies, birds, cats, dogs, pets, mnner, frauen, unisex_erwachsene, teenager__jungen, teenager__mdchen, jugendliche, jungs, mdchen, kinder, babys__jungen, babys__mdchen, babys, vgel, katzen, hunde, haustiere, not_specified)",
       "occasion": "enum(anniversary, baptism, bar_or_bat_mitzvah, birthday, canada_day, chinese_new_year, cinco_de_mayo, confirmation, christmas, day_of_the_dead, easter, eid, engagement, fathers_day, get_well, graduation, halloween, hanukkah, housewarming, kwanzaa, prom, july_4th, mothers_day, new_baby, new_years, quinceanera, retirement, st_patricks_day, sweet_16, sympathy, thanksgiving, valentines, wedding, ubilum, taufe, bar_oder_bat_mizwa, geburtstag, canada_day, chinesisches_neujahr, cinco_de_mayo, konfirmation, weihnachten, day_of_the_dead, ostern, eid, verlobung, vatertag, gute_besserung, abschluss, halloween, chanukka, hauseinweihung, kwanzaa, prom, der_4_juli, muttertag, neugeborenes, neujahr, quinceanera, ruhestand, st_patricks_day, sweet_16, anteilnahme, thanksgiving, valentinstag, hochzeit)",
       "style": "string",
